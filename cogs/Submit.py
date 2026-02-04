@@ -60,7 +60,7 @@ class Submit(commands.Cog):
             result = urlparse(screenshot)
             if all([result.scheme, result.netloc]):
                 if screenshot.startswith("https://yapx.ru/album/") or screenshot.startswith("https://imgur.com/a/") or screenshot.startswith("https://www.imgur.la/image/") or screenshot.startswith("https://yapx.ru/image/"):
-                    date = datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.")
+                    date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=3), "%d.%m.")
                     key_value = inter.author.name
                     key_cell = ws.find(key_value)
                     row = key_cell.row

@@ -151,7 +151,6 @@ class Top(commands.Cog):
                 ws.update(f"AH{place+1}", [[f"{place}. {member} - {value} сыгранных ДМов."]], value_input_option="USER_ENTERED")
 
         dt = datetime.datetime.now()
-        print(dt)
         dt_next = datetime.datetime.now() + datetime.timedelta(minutes=3)
         unix_ts = int(dt.timestamp())
         unix_ts_next = int(dt_next.timestamp())
@@ -163,12 +162,13 @@ class Top(commands.Cog):
     async def update_daily_top(self):
         guild = await self.bot.fetch_guild(1467650949731582220)
         channel = await guild.fetch_channel(1468554176194936863)
-        now = datetime.datetime.now()
+        now = datetime.datetime.now() + datetime.timedelta(hours=3)
+        print(now)
         now_date = datetime.date(now.year, now.month, now.day)
 
-        if now_date > self.update_date:
+        if now_date == self.update_date:
             results = {}
-            date = datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.")
+            date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=3), "%d.%m.")
             members = await get_participants_and_day(ws, date)
             dt = datetime.datetime.now()
             unix_ts = int(dt.timestamp())
@@ -204,7 +204,7 @@ class Top(commands.Cog):
             await channel.send(embed=embed)
             
             self.update_date = datetime.date(now.year, now.month, now.day)
-            print(self.update_date)
+            print(f"UPDATE DATE: {self.update_date}")
 
 def setup(bot):
     bot.add_cog(Top(bot))
