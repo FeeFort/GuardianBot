@@ -200,8 +200,9 @@ class Top(commands.Cog):
                 elif place == 3:
                     embed.description += f"🥉 {member.mention} - {value} сыгранных ДМов.\n\n"
                 else:
-                    embed.description += f"{place}. {member.mention} - {value} сыгранных ДМов.\n"
                     print(member)
+                    embed.description += f"{place}. {member.mention} - {value} сыгранных ДМов.\n"
+                    
 
             await channel.send(embed=embed)
             
