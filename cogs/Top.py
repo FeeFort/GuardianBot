@@ -150,8 +150,8 @@ class Top(commands.Cog):
                 embed.description += f"{place}. {member.mention} - {value} сыгранных ДМов.\n"
                 ws.update(f"AH{place+1}", [[f"{place}. {member} - {value} сыгранных ДМов."]], value_input_option="USER_ENTERED")
 
-        dt = datetime.datetime.now()
-        dt_next = datetime.datetime.now() + datetime.timedelta(minutes=3)
+        dt = datetime.datetime.now() + datetime.timedelta(hours=2)
+        dt_next = datetime.datetime.now() + datetime.timedelta(hours=2) + datetime.timedelta(minutes=3)
         unix_ts = int(dt.timestamp())
         unix_ts_next = int(dt_next.timestamp())
         embed.description += (f"\n⏱️ Обновлено: <t:{unix_ts}:f>\n📅 Следующее обновление: <t:{unix_ts_next}:f>")
@@ -162,14 +162,14 @@ class Top(commands.Cog):
     async def update_daily_top(self):
         guild = await self.bot.fetch_guild(1467650949731582220)
         channel = await guild.fetch_channel(1468554176194936863)
-        now = datetime.datetime.now()
+        now = datetime.datetime.now() + datetime.timedelta(hours=2)
         now_date = datetime.date(now.year, now.month, now.day)
 
         if now_date > self.update_date:
             results = {}
-            date = datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.")
+            date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=2), "%d.%m.")
             members = await get_participants_and_day(ws, date)
-            dt = datetime.datetime.now() - datetime.timedelta(hours=3)
+            dt = datetime.datetime.now()
             unix_ts = int(dt.timestamp())
             embed = disnake.Embed(title="🏆 Топ участников по кол-ву ДМов за день.", description=f"День: <t:{unix_ts}:D>\n\n", colour=disnake.Colour.dark_gold())
 
