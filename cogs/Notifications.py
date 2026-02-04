@@ -46,7 +46,7 @@ class Notifications(commands.Cog):
         channel = await guild.fetch_channel(1468553741211795537)
         role = await guild.fetch_role(1467651039695081562)
 
-        now = datetime.datetime.now() + datetime.timedelta(hours=2)
+        now = datetime.datetime.now()
         time_now = datetime.time(now.hour, now.minute)
         time = datetime.time(18)
 
