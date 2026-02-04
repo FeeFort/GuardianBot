@@ -163,12 +163,11 @@ class Top(commands.Cog):
         guild = await self.bot.fetch_guild(1467650949731582220)
         channel = await guild.fetch_channel(1468554176194936863)
         now = datetime.datetime.now() + datetime.timedelta(hours=3)
-        print(now)
         now_date = datetime.date(now.year, now.month, now.day)
 
         if now_date == self.update_date:
             results = {}
-            date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=3), "%d.%m.")
+            date = datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.")
             members = await get_participants_and_day(ws, date)
             dt = datetime.datetime.now()
             unix_ts = int(dt.timestamp())
