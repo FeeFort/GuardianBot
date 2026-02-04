@@ -201,6 +201,7 @@ class Top(commands.Cog):
                     embed.description += f"🥉 {member.mention} - {value} сыгранных ДМов.\n\n"
                 else:
                     embed.description += f"{place}. {member.mention} - {value} сыгранных ДМов.\n"
+                    print(member)
 
             await channel.send(embed=embed)
             
