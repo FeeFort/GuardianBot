@@ -46,4 +46,4 @@ for i in os.listdir("./cogs"):
     if i.endswith(".py") and not i.startswith("_"):
         bot.load_extension(f"cogs.{i[:-3]}")
 
-bot.run("MTQ2ODI1MDcwNjU5NDIzODY0Mw.GHKcSQ.s31YVN5kUSrpT7Rj9hbpF63dbfqCPXYBYn9LZA")
+bot.run()
