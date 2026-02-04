@@ -190,7 +190,8 @@ class Top(commands.Cog):
                         member = m
                         break
                     else:
-                        member = None
+                        member = guild.get_member_named(key)
+
 
                 if place == 1:
                     embed.description += f"🥇 {member.mention} - {value} сыгранных ДМов.\n\n"
