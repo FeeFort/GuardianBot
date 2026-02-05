@@ -189,9 +189,6 @@ class Top(commands.Cog):
 
             for place, (key, value) in enumerate(top10, start=1):
                 async for m in guild.fetch_members(limit=None):
-                    if role_challanger in m.roles:
-                        await m.add_roles(role_not_submit)
-
                     if m.name == key or m.display_name == key:
                         member = m
                         break
@@ -212,6 +209,10 @@ class Top(commands.Cog):
             
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             print(f"UPDATE DATE: {self.update_date}")
+
+            async for m in guild.fetch_members(limit=None):
+                if role_challanger in m.roles:
+                    await m.add_roles(role_not_submit)
 
 def setup(bot):
     bot.add_cog(Top(bot))
