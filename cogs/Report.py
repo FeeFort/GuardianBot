@@ -28,7 +28,7 @@ class MyModal(disnake.ui.Modal):
         channel = await inter.guild.fetch_channel(1468311758816153726)
         await channel.send(embed=embed, components=[
             disnake.ui.Button(label="Закрыть репорт",style=disnake.ButtonStyle.success, emoji="✅", custom_id="success_report"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.danger, emoji="🚫", custom_id="cancel_report")
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.red, emoji="🚫", custom_id="cancel_report")
         ])
 
 class Report(commands.Cog):
