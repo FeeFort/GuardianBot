@@ -162,6 +162,10 @@ class Top(commands.Cog):
     async def update_daily_top(self):
         guild = await self.bot.fetch_guild(1467650949731582220)
         channel = await guild.fetch_channel(1468554176194936863)
+
+        role_challanger = await guild.fetch_role(1467651039695081562)
+        role_not_submit = await guild.fetch_role(1469043883282399345)
+
         now = datetime.datetime.now() + datetime.timedelta(hours=3)
         now_date = datetime.date(now.year, now.month, now.day)
 
@@ -185,6 +189,9 @@ class Top(commands.Cog):
 
             for place, (key, value) in enumerate(top10, start=1):
                 async for m in guild.fetch_members(limit=None):
+                    if role_challanger in m.roles:
+                        await m.add_roles(role_not_submit)
+
                     if m.name == key or m.display_name == key:
                         member = m
                         break

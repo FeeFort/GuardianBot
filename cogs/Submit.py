@@ -60,6 +60,8 @@ class Submit(commands.Cog):
             result = urlparse(screenshot)
             if all([result.scheme, result.netloc]):
                 if screenshot.startswith("https://yapx.ru/album/") or screenshot.startswith("https://imgur.com/a/") or screenshot.startswith("https://www.imgur.la/image/") or screenshot.startswith("https://yapx.ru/image/"):
+                    role = await inter.guild.fetch_role(1469043883282399345)
+                    
                     date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=3), "%d.%m.")
                     key_value = inter.author.name
                     key_cell = ws.find(key_value)
@@ -111,6 +113,9 @@ class Submit(commands.Cog):
                         ).execute()
 
                         await inter.followup.send("✅ Твой отчет принят! +Respect")
+
+                        if role in inter.author.roles:
+                            await inter.author.remove_roles(role)
 
                         channel = await inter.guild.fetch_channel(1468632013807419425)
                         embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"10 ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
