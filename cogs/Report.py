@@ -38,8 +38,8 @@ class Report(commands.Cog):
     async def cog_load(self):
         print("Report loaded!")
 
-    @commands.slash_command(name="test")
-    async def test(self, inter):
+    @commands.slash_command(name="test_color_buttons")
+    async def test_color_buttons(self, inter):
         await inter.response.defer()
         await inter.followup.send(content="test", components=[
             disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.primary, emoji="🚫"),
