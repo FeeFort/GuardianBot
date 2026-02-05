@@ -27,8 +27,8 @@ class MyModal(disnake.ui.Modal):
         await inter.response.send_message("✅ Репорт отправлен!", ephemeral=True)
         channel = await inter.guild.fetch_channel(1468311758816153726)
         await channel.send(embed=embed, components=[
-            disnake.ui.Button(label="Закрыть репорт",style=disnake.ButtonStyle.success, emoji="✅", custom_id="success_report"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.red, emoji="🚫", custom_id="cancel_report")
+            disnake.ui.Button(label="Закрыть репорт",style=disnake.ButtonStyle.secondary, emoji="✅", custom_id="success_report"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.secondary, emoji="🚫", custom_id="cancel_report")
         ])
 
 class Report(commands.Cog):
@@ -37,16 +37,6 @@ class Report(commands.Cog):
 
     async def cog_load(self):
         print("Report loaded!")
-
-    @commands.slash_command(name="test_color_buttons")
-    async def test_color_buttons(self, inter):
-        await inter.response.defer()
-        await inter.followup.send(content="test", components=[
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.primary, emoji="🚫"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.secondary, emoji="🚫"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.success, emoji="🚫"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.danger, emoji="🚫")
-        ])
 
     @commands.Cog.listener()
     async def on_button_click(self, inter):
