@@ -21,7 +21,7 @@ class MyModal(disnake.ui.Modal):
     # The callback received when the user input is completed.
     async def callback(self, inter: disnake.ModalInteraction):
         embed = disnake.Embed(title="🕷️ Новый репорт", colour=disnake.Colour.red())
-        embed.set_author(name=f"{inter.author.display_name} ({inter.author.name})", icon_url=inter.author.avatar, url=f"https://discord.com/users/{inter.author.id}")
+        embed.set_author(name=f"{inter.author.display_name} ({inter.author.name}) (test: {inter.author.mention})", icon_url=inter.author.avatar, url=f"https://discord.com/users/{inter.author.id}")
         for key, value in inter.text_values.items():
             embed.description = value
     
