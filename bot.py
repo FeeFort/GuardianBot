@@ -1,7 +1,13 @@
 import os
+import logging
 
 import disnake
 from disnake.ext import commands, tasks
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
 
 bot = commands.InteractionBot(intents=disnake.Intents.all())
 
