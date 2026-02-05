@@ -211,7 +211,7 @@ class Top(commands.Cog):
             print(f"UPDATE DATE: {self.update_date}")
 
             async for m in guild.fetch_members(limit=None):
-                if role_challanger in m.roles:
+                if role_challanger in m.roles and role_not_submit not in m.roles:
                     await m.add_roles(role_not_submit)
 
 def setup(bot):
