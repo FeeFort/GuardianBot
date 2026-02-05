@@ -38,6 +38,18 @@ class Report(commands.Cog):
     async def cog_load(self):
         print("Report loaded!")
 
+    @commands.slash_command(name="test")
+    async def test(self, inter):
+        await inter.response.defer()
+        await inter.followup.send(content="test", components=[
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.primary, emoji="🚫"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.secondary, emoji="🚫"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.success, emoji="🚫"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.danger, emoji="🚫"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.link, emoji="🚫"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.premium, emoji="🚫")
+        ])
+
     @commands.Cog.listener()
     async def on_button_click(self, inter):
         if inter.component.custom_id == "report":
