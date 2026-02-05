@@ -45,9 +45,7 @@ class Report(commands.Cog):
             disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.primary, emoji="🚫"),
             disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.secondary, emoji="🚫"),
             disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.success, emoji="🚫"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.danger, emoji="🚫"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.link, emoji="🚫"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.premium, emoji="🚫")
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.danger, emoji="🚫")
         ])
 
     @commands.Cog.listener()
