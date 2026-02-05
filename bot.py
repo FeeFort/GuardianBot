@@ -1,9 +1,11 @@
 import os
 import logging
+from dotenv import load_dotenv
 
 import disnake
 from disnake.ext import commands, tasks
 
+load_dotenv()
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -52,4 +54,8 @@ for i in os.listdir("./cogs"):
     if i.endswith(".py") and not i.startswith("_"):
         bot.load_extension(f"cogs.{i[:-3]}")
 
-bot.run()
+TOKEN = os.getenv("DISCORD_TOKEN")
+if not TOKEN:
+    raise RuntimeError("DISCORD_TOKEN is not set")
+
+bot.run(TOKEN)
