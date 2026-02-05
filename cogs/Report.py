@@ -21,15 +21,15 @@ class MyModal(disnake.ui.Modal):
     # The callback received when the user input is completed.
     async def callback(self, inter: disnake.ModalInteraction):
         embed = disnake.Embed(title="🕷️ Новый репорт", colour=disnake.Colour.red())
-        embed.set_author(name=f"{inter.author.name}", icon_url=inter.author.avatar, url=f"https://discord.com/users/{inter.author.id}")
+        embed.set_author(name=f"{inter.author.display_name} ({inter.author.name})", icon_url=inter.author.avatar, url=f"https://discord.com/users/{inter.author.id}")
         for key, value in inter.text_values.items():
             embed.description = value
     
         await inter.response.send_message("✅ Репорт отправлен!", ephemeral=True)
         channel = await inter.guild.fetch_channel(1468311758816153726)
-        await channel.send(embed=embed, components=[#success-danger
-            disnake.ui.Button(label="Закрыть репорт",style=disnake.ButtonStyle.primary, emoji="✅", custom_id="success_report"),
-            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.primary, emoji="🚫", custom_id="cancel_report")
+        await channel.send(embed=embed, components=[
+            disnake.ui.Button(label="Закрыть репорт",style=disnake.ButtonStyle.success, emoji="✅", custom_id="success_report"),
+            disnake.ui.Button(label="Отклонить репорт",style=disnake.ButtonStyle.danger, emoji="🚫", custom_id="cancel_report")
         ])
 
 class Report(commands.Cog):
@@ -48,6 +48,12 @@ class Report(commands.Cog):
 
             embed = inter.message.embeds[0]
             embed.description += f"\n\nРепорт закрыт <t:{unix_dt}:f> пользователем {inter.author.mention}"
+            await inter.response.edit_message(embed=embed, view=None)
+        elif inter.component.custom_id == "cancel_report":
+            unix_dt = int(datetime.datetime.now().timestamp())
+
+            embed = inter.message.embeds[0]
+            embed.description += f"\n\nРепорт отклонен <t:{unix_dt}:f> пользователем {inter.author.mention}"
             await inter.response.edit_message(embed=embed, view=None)
 
 
