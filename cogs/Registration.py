@@ -1,3 +1,5 @@
+import datetime
+
 import disnake
 from disnake.ext import commands
 from disnake import TextInputStyle
@@ -17,6 +19,7 @@ client = gspread.authorize(creds)
 
 sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBVJaNUKOZ6Me3l7Ey2iM-0X1f7SqvPBoQ/edit?gid=1654540911#gid=1654540911")
 ws = sheet.worksheet("LEADERBOARD")
+ws_reg = sheet.worksheet("REG_DATA")
 
 RANK_OPTIONS = [
     disnake.SelectOption(emoji="<:Iron_1_Rank:1469278406373015607>", label="Железо 1", value="Iron 1"),
@@ -47,12 +50,13 @@ RANK_OPTIONS = [
 ]
 
 class RankView(disnake.ui.View):
-    def __init__(self, nickname: str, goal: str):
+    def __init__(self, nickname: str, goal: str, results_now: str):
         super().__init__(timeout=300)
         self.nickname = nickname
         self.goal = goal
         self.current_rank = None
         self.peak_rank = None
+        self.results_now = results_now
 
     @disnake.ui.string_select(
         placeholder="Выбери свой текущий ранг",
@@ -80,18 +84,34 @@ class RankView(disnake.ui.View):
     async def save(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         if not self.current_rank or not self.peak_rank:
             return await inter.response.send_message("Выбери оба ранга.", ephemeral=True)
+        
+        ws_reg.append_row(
+            [
+                datetime.datetime.now(),
+                self.nickname,
+                self.current_rank,
+                self.peak_rank,
+                self.goal,
+                inter.author.name,
+                "-"
+            ],
+            value_input_option="USER_ENTERED"
+        )
 
-        # тут сохраняй в БД/Sheets
         await inter.response.edit_message(
             content=(
-                " Регистрация завершена!\n"
-                f"Ник: **{self.nickname}**\n"
-                f"Текущий ранг: **{self.current_rank}**\n"
-                f"Пик: **{self.peak_rank}**\n"
-                f"Цель: **{self.goal}**"
+                "✅ Регистрация завершена!\n"
+                f"**Ник:** {self.nickname}\n"
+                f"**Текущий ранг:** {self.current_rank}\n"
+                f"**Пик:** {self.peak_rank}\n"
+                f"**Цель:** {self.goal}\n"
+                f"**Игровые ощущения сейчас:** {self.results_now}"
             ),
             view=None
         )
+
+        channel = await inter.guild.fetch_channel(1469283626565894235)
+        await channel.send(content=f"{inter.author.mention}", embed=disnake.Embed(title="🎯 Новый челленджер!", description=f"**Ник:** {self.nickname}\n**Текущий ранг:** {self.current_rank}\n**Пик:** {self.peak_rank}\n**Цель:** {self.goal}\n**Игровые ощущения сейчас:** {self.results_now}"))
 
 class RegisterModal(disnake.ui.Modal):
     def __init__(self):
@@ -122,8 +142,9 @@ class RegisterModal(disnake.ui.Modal):
     async def callback(self, inter: disnake.ModalInteraction):
         nickname = inter.text_values["nickname"].strip()
         goal = inter.text_values["goal"].strip()
+        results_now = inter.text_values["results_now"].strip()
 
-        view = RankView(nickname=nickname, goal=goal)
+        view = RankView(nickname=nickname, goal=goal, results_now=results_now)
         await inter.response.send_message(
             "Теперь выбери ранги и нажми кнопку ниже:",
             view=view,
