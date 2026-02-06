@@ -100,12 +100,13 @@ class RankView(disnake.ui.View):
 
         await inter.response.edit_message(
             content=(
-                "✅ Регистрация завершена!\n"
+                "✅ Регистрация завершена.\n"
                 f"**Ник:** {self.nickname}\n"
                 f"**Текущий ранг:** {self.current_rank}\n"
                 f"**Пик:** {self.peak_rank}\n"
                 f"**Цель:** {self.goal}\n"
-                f"**Игровые ощущения сейчас:** {self.results_now}"
+                f"**Игровые ощущения сейчас:** {self.results_now}\n\n"
+                "Это только начало.\nСледующий шаг — верификация.\n\nДокажи, что ты здесь не случайно.\nНажми кнопку в чате <#1468281780414054656> и продолжай."
             ),
             view=None
         )
