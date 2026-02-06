@@ -223,7 +223,7 @@ class Registration(commands.Cog):
                 if m.name in value:
                     if role in m.roles:
                         rankRole = await inter.guild.fetch_role(rankRoles_ids[value[0]])
-                        await inter.author.add_roles(rankRole)
+                        await m.add_roles(rankRole)
         
         await inter.followup.send("Roles added!")
 
