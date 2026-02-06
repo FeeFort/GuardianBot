@@ -49,7 +49,7 @@ async def get_participants_and_day(ws, day_header: str, header_row: int = 1):
 class Top(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 5)
+        self.update_date = datetime.date(2026, 2, 7)
 
     async def cog_load(self):
         print("Top loaded!")
