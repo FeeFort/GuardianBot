@@ -53,7 +53,7 @@ class Verification(commands.Cog):
             print(f"{inter.author.name} - {l in values}")
             if l in values:
                 role = await inter.guild.fetch_role(1467651039695081562)
-                role_ver = await inter.guild.fetch_channel(1469314317471056044)
+                role_ver = await inter.guild.fetch_role(1469314317471056044)
                 await inter.author.remove_roles(role_ver)
                 await inter.author.add_roles(role)
                 await inter.followup.send(embed=disnake.Embed(
