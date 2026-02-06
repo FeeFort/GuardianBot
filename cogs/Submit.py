@@ -71,7 +71,7 @@ class Submit(commands.Cog):
                     header_cell = ws.find(column_header)
                     col = header_cell.col
 
-                    a1 = gspread.utils.rowcol_to_a1(row, col)  # например "D25"
+                    a1 = gspread.utils.rowcol_to_a1(row, col)
                     range_a1 = f"{ws.title}!{a1}"
 
                     resp = service.spreadsheets().values().get(
@@ -79,7 +79,6 @@ class Submit(commands.Cog):
                         range=range_a1
                     ).execute()
 
-                    # values -> [] если пусто, или [["..."]] если есть значение/формула
                     values = resp.get("values", [])
                     has_value = bool(values) and bool(values[0]) and str(values[0][0]).strip() != ""
                     
