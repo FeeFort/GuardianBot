@@ -111,7 +111,7 @@ class RegisterModal(disnake.ui.Modal):
             ),
             disnake.ui.TextInput(
                 label="Запись результатов",
-                placeholder="Для того чтобы заметить результат в конце челленджа, опишите свои текущие игровые ощущения на данный момент и сохраните скрин трекера с K/D и HS% для итогового сравнения.",
+                placeholder="Опишите свои текущие игровые ощущения и сохраните скрин трекера с K/D и HS% для итогового сравнения.",
                 custom_id="results_now",
                 style=TextInputStyle.paragraph
             )
