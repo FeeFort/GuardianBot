@@ -44,7 +44,10 @@ class Verification(commands.Cog):
     async def on_button_click(self, inter):
         if inter.component.custom_id == "verification":
             await inter.response.defer()
+            values = ws.get("C2:С3")
+            print(values)
             values = ws.get("C140:С827")
+            print(values)
             l = [inter.author.name]
 
             for i in values:
