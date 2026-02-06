@@ -19,7 +19,6 @@ client = gspread.authorize(creds)
 
 sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBVJaNUKOZ6Me3l7Ey2iM-0X1f7SqvPBoQ/edit?gid=1654540911#gid=1654540911")
 ws = sheet.worksheet("LEADERBOARD")
-ws_reg = sheet.worksheet("REG_DATA")
 
 RANK_OPTIONS = [
     disnake.SelectOption(emoji="<:Iron_1_Rank:1469278406373015607>", label="Железо 1", value="Iron 1"),
@@ -113,15 +112,11 @@ class RankView(disnake.ui.View):
             "Radiant": 1469279768108073162
         }
         
-        ws_reg.append_row(
+        ws.append_row(
             [
-                datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.%Y %H:%M:%S"),
                 self.nickname,
-                self.current_rank,
                 self.peak_rank,
-                self.goal,
                 inter.author.name,
-                "-"
             ],
             value_input_option="USER_ENTERED"
         )
