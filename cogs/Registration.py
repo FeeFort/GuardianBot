@@ -199,6 +199,35 @@ class Registration(commands.Cog):
         await inter.followup.send("Registration")
         await inter.channel.send(embed=disnake.Embed(title="🏆 #PA1KA GUARDIAN CHALLENGE", description="Добро пожаловать.\nЭто не обычный сервер. Здесь **не ищут лёгких путей и быстрых оправданий.**\n\nGuardian Challenge — место, где **ты ломаешь себя в VALORANT**, играя Deathmatch **только с Guardian.**\n**Каждый день. 10 матчей. Без исключений.**\nХочешь прогресс — **плати временем, концентрацией и дисциплиной.**\n\nЗдесь не важно, **кто ты был.**\nВажно, **кем станешь после сотен матчей и тысяч выстрелов.**\n\nЕсли готов войти в игру и начать прокачку — **нажми кнопку ниже и зарегистрируйся.**", colour=disnake.Colour.dark_gold()), components=[disnake.ui.Button(label="Зарегестрироваться", custom_id="register", style=disnake.ButtonStyle.blurple, emoji="📝")])
 
+    @commands.slash_command(name="give_roles")
+    async def give_roles(self, inter):
+        await inter.response.defer()
+
+        rankRoles_ids = {
+            "Железо": 1469278913082687596,
+            "Бронза": 1469278975485411525,
+            "Серебро": 1469278977955991582,
+            "Золото": 1469278980128374834,
+            "Платина": 1469279559672271000,
+            "Алмаз": 1469279561589068001,
+            "Рассвет": 1469279765876834315,
+            "Бессмертный": 1469279767634120795,
+            "Радиант": 1469279768108073162
+        }
+
+        values = ws.get("B2:C138")
+        role = await inter.guild.fetch_role(1467651039695081562)
+
+        async for m in inter.guild.fetch_members(limit=None):
+            for value in values:
+                if m.name in value:
+                    if role in m.roles:
+                        rankRole = await inter.guild.fetch_role(rankRoles_ids[value[0]])
+                        await inter.author.add_roles(rankRole)
+        
+        await inter.followup.send("Roles added!")
+
+
     @commands.Cog.listener()
     async def on_button_click(self, inter):
         if inter.component.custom_id == "register":
