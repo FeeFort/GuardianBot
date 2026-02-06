@@ -85,6 +85,34 @@ class RankView(disnake.ui.View):
         if not self.current_rank or not self.peak_rank:
             return await inter.response.send_message("Выбери оба ранга.", ephemeral=True)
         
+        rankRoles_ids = {
+            "Iron 1": 1469278773974401107,
+            "Iron 2": 1469278853980749834,
+            "Iron 3": 1469278913082687596,
+            "Bronze 1": 1469278966505410737,
+            "Bronze 2": 1469278975103860847,
+            "Bronze 3": 1469278975485411525,
+            "Silver 1": 1469278976664010824,
+            "Silver 2": 1469278977255542876,
+            "Silver 3": 1469278977955991582,
+            "Gold 1": 1469278978694053920,
+            "Gold 2": 1469278979403026463,
+            "Gold 3": 1469278980128374834,
+            "Platinum 1": 1469278980736684164,
+            "Platunum 2": 1469278981042733107,
+            "Platinum 3": 1469279559672271000,
+            "Diamond 1": 1469279560414658560,
+            "Diamond 2": 1469279560926363649,
+            "Diamond 3": 1469279561589068001,
+            "Ascendant 1": 1469279562012823727,
+            "Ascendant 2": 1469279562637643900,
+            "Ascendant 3": 1469279765876834315,
+            "Immortal 1": 1469279766350925986,
+            "Immortal 2": 1469279766874947676,
+            "Immortal 3": 1469279767634120795,
+            "Radiant": 1469279768108073162
+        }
+        
         ws_reg.append_row(
             [
                 datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.%Y %H:%M:%S"),
@@ -113,7 +141,10 @@ class RankView(disnake.ui.View):
 
         channel = await inter.guild.fetch_channel(1469283626565894235)
         role = await inter.guild.fetch_role(1469314317471056044)
+        rankRole = await inter.guild.fetch_role(rankRoles_ids[self.peak_rank])
+        
         await inter.author.add_roles(role)
+        await inter.author.add_roles(rankRole)
         await channel.send(content=f"{inter.author.mention}", embed=disnake.Embed(title="🎯 Новый челленджер!", description=f"**Ник:** {self.nickname}\n**Текущий ранг:** {self.current_rank}\n**Пик:** {self.peak_rank}\n**Цель:** {self.goal}\n**Игровые ощущения сейчас:** {self.results_now}", colour=disnake.Colour.dark_gold()))
 
 class RegisterModal(disnake.ui.Modal):
