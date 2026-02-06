@@ -112,7 +112,7 @@ class RankView(disnake.ui.View):
         )
 
         channel = await inter.guild.fetch_channel(1469283626565894235)
-        await channel.send(content=f"{inter.author.mention}", embed=disnake.Embed(title="🎯 Новый челленджер!", description=f"**Ник:** {self.nickname}\n**Текущий ранг:** {self.current_rank}\n**Пик:** {self.peak_rank}\n**Цель:** {self.goal}\n**Игровые ощущения сейчас:** {self.results_now}"))
+        await channel.send(content=f"{inter.author.mention}", embed=disnake.Embed(title="🎯 Новый челленджер!", description=f"**Ник:** {self.nickname}\n**Текущий ранг:** {self.current_rank}\n**Пик:** {self.peak_rank}\n**Цель:** {self.goal}\n**Игровые ощущения сейчас:** {self.results_now}", colour=disnake.Colour.dark_gold()))
 
 class RegisterModal(disnake.ui.Modal):
     def __init__(self):
