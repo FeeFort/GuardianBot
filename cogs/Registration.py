@@ -87,7 +87,7 @@ class RankView(disnake.ui.View):
         
         ws_reg.append_row(
             [
-                datetime.datetime.now(),
+                datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.%Y %H:%M:%S"),
                 self.nickname,
                 self.current_rank,
                 self.peak_rank,
