@@ -31,39 +31,39 @@ class RegisterModal(disnake.ui.Modal):
             disnake.ui.StringSelect(
                 placeholder="Выбери свой текущий ранг.",
                 options=[
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Железо",
                         value="iron"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Бронза",
                         value="bronze"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Серебро",
                         value="silver"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Золото",
                         value="gold"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Платина",
                         value="platinum"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Алмаз",
                         value="diamond"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Рассвет",
                         value="ascedant"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Бессмертный",
                         value="immortal"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Радиант",
                         value="radiant"
                     )
@@ -73,39 +73,39 @@ class RegisterModal(disnake.ui.Modal):
             disnake.ui.StringSelect(
                 placeholder="Выбери свой ранг в пике.",
                 options=[
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Железо",
                         value="iron"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Бронза",
                         value="bronze"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Серебро",
                         value="silver"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Золото",
                         value="gold"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Платина",
                         value="platinum"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Алмаз",
                         value="diamond"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Рассвет",
                         value="ascedant"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Бессмертный",
                         value="immortal"
                     ),
-                    disnake.ui.SelectOption(
+                    disnake.SelectOption(
                         label="Радиант",
                         value="radiant"
                     )
