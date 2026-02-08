@@ -312,7 +312,7 @@ class AFK(commands.Cog):
 
             kick_all = kick1 + kick2
 
-            admin_channel = self.bot.get_channel(1470128018294050818)
+            admin_channel = await guild.fetch_channel(1470128018294050818)
             await send_afk_report(admin_channel, ws, kick_all)
             await apply_policy(ws, warn1 + warn2, None)
 
