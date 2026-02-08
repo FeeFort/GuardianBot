@@ -130,6 +130,10 @@ def get_wave_ranges(ws):
 
     return wave1, wave2
 
+def cell_value(row_list):
+    # row_list это либо ['10'], либо []
+    return row_list[0] if row_list else ""
+
 def get_afk_candidates(
     ws,
     guild,
@@ -168,9 +172,9 @@ def get_afk_candidates(
         if is_empty(name):
             continue
 
-        v1 = values[0][i][0] if i < len(values[0]) else ""
-        v2 = values[1][i][0] if i < len(values[1]) else ""
-        v3 = values[2][i][0] if i < len(values[2]) else ""
+        v1 = cell_value(values[0][i])
+        v2 = cell_value(values[1][i])
+        v3 = cell_value(values[2][i])
 
         has1 = not is_empty(v1)
         has2 = not is_empty(v2)
