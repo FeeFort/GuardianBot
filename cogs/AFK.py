@@ -294,7 +294,7 @@ class AFK(commands.Cog):
         print("AFK loaded!")
         self.afk.start()
 
-    async def cog_unload(self):
+    def cog_unload(self):
         print("AFK unloaded!")
         self.afk.cancel()
 
