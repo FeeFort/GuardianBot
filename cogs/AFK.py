@@ -172,6 +172,8 @@ def get_afk_candidates(
         if is_empty(name):
             continue
 
+        print(f"NAMES: {len(names)}, VALUES0: {len(values[0])}, VALUES1: {len(values[1])}, VALUES2: {len(values[2])}")
+
         v1 = cell_value(values[0][i])
         v2 = cell_value(values[1][i])
         v3 = cell_value(values[2][i])
