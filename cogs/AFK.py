@@ -136,7 +136,7 @@ def cell_value(row_list):
     # row_list это либо ['10'], либо []
     return row_list[0] if row_list else ""
 
-async def get_afk_candidates(
+def get_afk_candidates(
     ws,
     guild: disnake.Guild,
     members: List[disnake.Member],
@@ -348,7 +348,8 @@ class AFK(commands.Cog):
             headers = ws.row_values(1)
             dates = get_last_3_dates_msk()
             cols = [headers.index(d) + 1 for d in dates]
-            members = await guild.fetch_members(limit=None)
+            members = []
+            async for m in guild.fetch_members(limit=None): members.append(m)
 
             warn1, kick1, manual1 = get_afk_candidates(ws, guild, members, wave1, cols, name_col=3)
             warn2, kick2, manual2 = get_afk_candidates(ws, guild, members, wave2, cols, name_col=3, start_date="09.02.")
