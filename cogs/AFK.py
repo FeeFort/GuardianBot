@@ -160,33 +160,26 @@ def get_afk_candidates(
     if end_row < start_row:
         return [], [], []
 
-    # guard для новичков: окно дат целиком должно быть >= start_date
     if start_date:
         try:
             start_dt = datetime.datetime.strptime(start_date, "%d.%m")
         except ValueError:
             raise ValueError(f"start_date must be DD.MM, got: {start_date!r}")
 
-        # cols соответствует трём дням; даты для них ты уже нашёл по headers.
-        # Здесь проще проверять не по cols, а по самим датам — но раз ты выбрал cols,
-        # мы делаем guard по текущей дате через get_last_3_dates_msk (если она у тебя есть).
-        # Если хочешь — можешь убрать этот блок и делать guard выше по датам.
-        # Ниже — безопасный вариант по датам:
         if "get_last_3_dates_msk" in globals():
             dates = get_last_3_dates_msk()
             for d in dates:
+                print(f"DATE: {d}")
                 if datetime.datetime.strptime(d, "%d.%m") < start_dt:
                     return [], [], []
-        # Если get_last_3_dates_msk нет, просто не делаем guard.
 
-    # Прямоугольник чтения: от min_col до max_col, чтобы всё пришло одинаковой длины
     min_col = min([name_col, *cols])
     max_col = max([name_col, *cols])
 
     a1_start = rowcol_to_a1(start_row, min_col)
     a1_end = rowcol_to_a1(end_row, max_col)
 
-    grid = ws.get(f"{a1_start}:{a1_end}")  # list[list[str]]
+    grid = ws.get(f"{a1_start}:{a1_end}")
 
     def safe_get(row: list, absolute_col: int) -> str:
         """Достаёт значение из строки grid по абсолютному номеру колонки (1-based)."""
@@ -205,10 +198,6 @@ def get_afk_candidates(
     kick: list[tuple[disnake.Member, int]] = []
     manual: list[str] = []
 
-    # cols ожидаются в порядке [day1, day2, day3] (последние 3 дня).
-    # Логика:
-    # - kick: все 3 пустые
-    # - warn: первые 2 пустые, третий НЕ пустой (чтобы не спамить ежедневно)
     c1, c2, c3 = cols
 
     for offset, row in enumerate(grid):
@@ -248,7 +237,6 @@ async def apply_policy(ws, warn, kick):
         except:
             pass
 
-    # кикаем и удаляем строки снизу вверх
     """for member, row in sorted(kick, key=lambda x: x[1], reverse=True):
         try:
             await member.kick(reason="AFK 3 дня подряд")
@@ -265,7 +253,6 @@ async def apply_policy_kick_and_delete(ws, kick_list: list[tuple[disnake.Member,
     kicked = 0
     failed = 0
 
-    # 1) Кикаем
     for member, _row in kick_list:
         try:
             #await member.remove_roles(role)
@@ -274,7 +261,6 @@ async def apply_policy_kick_and_delete(ws, kick_list: list[tuple[disnake.Member,
         except:
             failed += 1
 
-    # 2) Удаляем строки снизу вверх
     for _member, row in sorted(kick_list, key=lambda x: x[1], reverse=True):
         try:
             ws.delete_rows(row)
