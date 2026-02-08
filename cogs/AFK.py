@@ -212,14 +212,11 @@ async def apply_policy_kick_and_delete(ws, kick_list: list[tuple[disnake.Member,
     """
     kicked = 0
     failed = 0
-    
-    guild = await self.bot.fetch_guild(1467650949731582220)
-    role = await guild.fetch_role(1467651039695081562)
 
     # 1) Кикаем
     for member, _row in kick_list:
         try:
-            await member.remove_roles(role)
+            #await member.remove_roles(role)
             #await member.kick(reason="AFK 3 дня подряд")
             kicked += 1
         except:
@@ -301,6 +298,8 @@ class AFK(commands.Cog):
 
         if now_date == self.update_date:
             wave1, wave2 = get_wave_ranges(ws)
+            print(f"WAVE 1: {wave1}")
+            print(f"WAVE 2: {wave2}")
 
             warn1, kick1, manual1 = get_afk_candidates(
                 ws, guild, wave1
@@ -309,6 +308,8 @@ class AFK(commands.Cog):
             warn2, kick2, manual2 = get_afk_candidates(
                 ws, guild, wave2, start_date="09.02"
             )
+
+            print(f"KICK 1: {kick1}")
 
             kick_all = kick1 + kick2
 
