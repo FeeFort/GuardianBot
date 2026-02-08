@@ -1,5 +1,4 @@
 import datetime
-from datetime import datetime, timedelta
 
 import disnake
 from disnake.ext import commands, tasks
@@ -102,11 +101,11 @@ def is_empty(value: str | None) -> bool:
     return value is None or str(value).strip() == ""
 
 def get_last_3_dates_msk():
-    now = datetime.now() + timedelta(hours=3)  # МСК
+    now = datetime.datetime.now() + datetime.timedelta(hours=3)  # МСК
     return [
-        (now - timedelta(days=1)).strftime("%d.%m"),
-        (now - timedelta(days=2)).strftime("%d.%m"),
-        (now - timedelta(days=3)).strftime("%d.%m"),
+        (now - datetime.timedelta(days=1)).strftime("%d.%m"),
+        (now - datetime.timedelta(days=2)).strftime("%d.%m"),
+        (now - datetime.timedelta(days=3)).strftime("%d.%m"),
     ]
 
 def get_wave_ranges(ws):
@@ -143,7 +142,7 @@ def get_afk_candidates(
     # guard: для новичков проверяем, что окно целиком >= start_date
     if start_date:
         for d in dates:
-            if datetime.strptime(d, "%d.%m") < datetime.strptime(start_date, "%d.%m"):
+            if datetime.datetime.strptime(d, "%d.%m") < datetime.datetime.strptime(start_date, "%d.%m"):
                 return [], [], []
 
     try:
