@@ -109,23 +109,24 @@ def get_last_3_dates_msk():
     ]
 
 def get_wave_ranges(ws):
-    participants_col = ws.col_values(3)  # колонка C
-
-    divider_row = None
-    for idx, value in enumerate(participants_col, start=1):
-        if value.strip().lower() == "Вторая волна приглашений":
-            divider_row = idx
-            break
-
-    if divider_row is None:
+    try:
+        divider_cell = ws.find("Вторая волна приглашений")
+    except gspread.exceptions.CellNotFound:
         raise RuntimeError("Не найдена строка 'Вторая волна приглашений'")
 
-    last_row = max(
-        i for i, v in enumerate(participants_col, start=1) if v.strip()
-    )
+    divider_row = divider_cell.row
+
+    participants_col = ws.col_values(3)  # колонка C (Discord.name)
+    last_row = max(i for i, v in enumerate(participants_col, start=1) if v.strip())
 
     wave1 = (2, divider_row - 1)
     wave2 = (divider_row + 1, last_row)
+
+    # защитка от кривых диапазонов
+    if wave1[1] < wave1[0]:
+        wave1 = (2, 1)  # пустой диапазон
+    if wave2[1] < wave2[0]:
+        wave2 = (divider_row + 1, divider_row)  # пустой диапазон
 
     return wave1, wave2
 
