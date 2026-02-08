@@ -121,7 +121,7 @@ class Submit(commands.Cog):
                             await inter.author.remove_roles(role)
 
                         channel = await inter.guild.fetch_channel(1468632013807419425)
-                        embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"10 ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
+                        embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{count} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
                         await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
                     else:
                         await inter.followup.send("🚫 Ты не можешь отправлять больше одного отчета в день!")

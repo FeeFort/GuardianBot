@@ -113,7 +113,7 @@ def get_wave_ranges(ws):
 
     divider_row = None
     for idx, value in enumerate(participants_col, start=1):
-        if value.strip().lower() == "вторая волна приглашений":
+        if value.strip().lower() == "Вторая волна приглашений":
             divider_row = idx
             break
 
