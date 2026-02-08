@@ -162,15 +162,14 @@ def get_afk_candidates(
 
     if start_date:
         try:
-            start_dt = datetime.datetime.strptime(start_date, "%d.%m")
+            start_dt = datetime.datetime.strptime(start_date, "%d.%m.")
         except ValueError:
             raise ValueError(f"start_date must be DD.MM, got: {start_date!r}")
 
         if "get_last_3_dates_msk" in globals():
             dates = get_last_3_dates_msk()
             for d in dates:
-                print(f"DATE: {d}")
-                if datetime.datetime.strptime(d, "%d.%m") < start_dt:
+                if datetime.datetime.strptime(d, "%d.%m.") < start_dt:
                     return [], [], []
 
     min_col = min([name_col, *cols])
@@ -344,7 +343,7 @@ class AFK(commands.Cog):
             cols = [headers.index(d) + 1 for d in dates]
 
             warn1, kick1, manual1 = get_afk_candidates(ws, guild, wave1, cols, name_col=3)
-            warn2, kick2, manual2 = get_afk_candidates(ws, guild, wave2, cols, name_col=3, start_date="09.02")
+            warn2, kick2, manual2 = get_afk_candidates(ws, guild, wave2, cols, name_col=3, start_date="09.02.")
 
             print(f"KICK 1: {kick1}")
 
