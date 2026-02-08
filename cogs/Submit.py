@@ -60,6 +60,10 @@ class Submit(commands.Cog):
             result = urlparse(screenshot)
             if all([result.scheme, result.netloc]):
                 if screenshot.startswith("https://yapx.ru/album/") or screenshot.startswith("https://imgur.com/a/") or screenshot.startswith("https://www.imgur.la/image/") or screenshot.startswith("https://yapx.ru/image/"):
+                    if inter.guild is None:
+                        await inter.followup.send("Команда </отчет:1468317200740909077> не работает в ЛС бота. Пропиши команду в <#1467651392209682432>", ephemeral=True)
+                        return
+
                     role = await inter.guild.fetch_role(1469043883282399345)
                     
                     date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=3), "%d.%m.")
