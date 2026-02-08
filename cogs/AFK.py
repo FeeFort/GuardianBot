@@ -136,9 +136,10 @@ def cell_value(row_list):
     # row_list это либо ['10'], либо []
     return row_list[0] if row_list else ""
 
-def get_afk_candidates(
+async def get_afk_candidates(
     ws,
     guild: disnake.Guild,
+    members: List[disnake.Member],
     row_range: tuple[int, int],
     cols: list[int],
     name_col: int = 3,                 # C = discord.name
@@ -217,10 +218,13 @@ def get_afk_candidates(
         has3 = not is_empty(v3)
         print(f"HAS1: {has1}, HAS2: {has2}, HAS3: {has3}")
 
-        member = guild.get_member_named(name)
-        if member is None:
-            manual.append(name)
-            continue
+        for m in members:
+            if m.name == name or m.display_name == name:
+                member = m
+                break
+            else:
+                member = None
+                manual.append(name)
 
         if (not has1) and (not has2) and (not has3):
             kick.append((member, sheet_row))
@@ -344,10 +348,13 @@ class AFK(commands.Cog):
             headers = ws.row_values(1)
             dates = get_last_3_dates_msk()
             cols = [headers.index(d) + 1 for d in dates]
+            members = await guild.fetch_members(limit=None)
 
-            warn1, kick1, manual1 = get_afk_candidates(ws, guild, wave1, cols, name_col=3)
-            warn2, kick2, manual2 = get_afk_candidates(ws, guild, wave2, cols, name_col=3, start_date="09.02.")
+            warn1, kick1, manual1 = get_afk_candidates(ws, guild, members, wave1, cols, name_col=3)
+            warn2, kick2, manual2 = get_afk_candidates(ws, guild, members, wave2, cols, name_col=3, start_date="09.02.")
 
+            print(f"KICK1: {kick1}")
+            print(f"WARN1: {warn1}")
             print(f"MANUAL1: {manual1}")
 
             kick_all = kick1 + kick2
