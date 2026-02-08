@@ -2,9 +2,11 @@ import datetime
 
 import disnake
 from disnake.ext import commands, tasks
+from typing import List, Tuple, Optional
 
 import gspread
 from google.oauth2.service_account import Credentials
+from gspread.utils import rowcol_to_a1
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -136,60 +138,102 @@ def cell_value(row_list):
 
 def get_afk_candidates(
     ws,
-    guild,
+    guild: disnake.Guild,
     row_range: tuple[int, int],
-    start_date: str | None = None,
-):
-    headers = ws.row_values(1)
-    dates = get_last_3_dates_msk()
+    cols: list[int],
+    name_col: int = 3,                 # C = discord.name
+    start_date: str | None = None,     # "09.02" for wave2, None for wave1
+) -> tuple[list[disnake.Member], list[tuple[disnake.Member, int]], list[str]]:
+    """
+    Возвращает:
+      warn:   список Member (2 дня подряд пусто, а 3-й день был непустой)
+      kick:   список (Member, row) для кика и удаления строки
+      manual: список discord.name, которых не нашли в гильдии
 
-    # guard: для новичков проверяем, что окно целиком >= start_date
-    if start_date:
-        for d in dates:
-            if datetime.datetime.strptime(d, "%d.%m") < datetime.datetime.strptime(start_date, "%d.%m"):
-                return [], [], []
-
-    try:
-        cols = [headers.index(d) + 1 for d in dates]
-    except ValueError:
-        print("Не найдены все 3 колонки дат, пропуск проверки")
-        return [], [], []
+    ВАЖНО:
+      - cols должен быть списком из 3 номеров колонок (1-based), соответствующих проверяемым дням
+      - row_range = (start_row, end_row) — диапазон строк волны (включительно)
+      - читаем одним прямоугольным диапазоном, чтобы не было рассинхрона длин
+    """
 
     start_row, end_row = row_range
+    if end_row < start_row:
+        return [], [], []
 
-    names = ws.get(f"C{start_row}:C{end_row}")
-    values = [
-        ws.get(f"{chr(64+col)}{start_row}:{chr(64+col)}{end_row}")
-        for col in cols
-    ]
+    # guard для новичков: окно дат целиком должно быть >= start_date
+    if start_date:
+        try:
+            start_dt = datetime.datetime.strptime(start_date, "%d.%m")
+        except ValueError:
+            raise ValueError(f"start_date must be DD.MM, got: {start_date!r}")
 
-    warn, kick, manual = [], [], []
+        # cols соответствует трём дням; даты для них ты уже нашёл по headers.
+        # Здесь проще проверять не по cols, а по самим датам — но раз ты выбрал cols,
+        # мы делаем guard по текущей дате через get_last_3_dates_msk (если она у тебя есть).
+        # Если хочешь — можешь убрать этот блок и делать guard выше по датам.
+        # Ниже — безопасный вариант по датам:
+        if "get_last_3_dates_msk" in globals():
+            dates = get_last_3_dates_msk()
+            for d in dates:
+                if datetime.datetime.strptime(d, "%d.%m") < start_dt:
+                    return [], [], []
+        # Если get_last_3_dates_msk нет, просто не делаем guard.
 
-    print(f"VALUES: {values}")
+    # Прямоугольник чтения: от min_col до max_col, чтобы всё пришло одинаковой длины
+    min_col = min([name_col, *cols])
+    max_col = max([name_col, *cols])
 
-    for i, row in enumerate(names):
-        name = row[0] if row else ""
+    a1_start = rowcol_to_a1(start_row, min_col)
+    a1_end = rowcol_to_a1(end_row, max_col)
+
+    grid = ws.get(f"{a1_start}:{a1_end}")  # list[list[str]]
+
+    def safe_get(row: list, absolute_col: int) -> str:
+        """Достаёт значение из строки grid по абсолютному номеру колонки (1-based)."""
+        idx = absolute_col - min_col
+        if idx < 0:
+            return ""
+        if idx >= len(row):
+            return ""
+        v = row[idx]
+        return "" if v is None else str(v)
+
+    def is_empty(v: str) -> bool:
+        return v.strip() == ""
+
+    warn: list[disnake.Member] = []
+    kick: list[tuple[disnake.Member, int]] = []
+    manual: list[str] = []
+
+    # cols ожидаются в порядке [day1, day2, day3] (последние 3 дня).
+    # Логика:
+    # - kick: все 3 пустые
+    # - warn: первые 2 пустые, третий НЕ пустой (чтобы не спамить ежедневно)
+    c1, c2, c3 = cols
+
+    for offset, row in enumerate(grid):
+        sheet_row = start_row + offset
+
+        name = safe_get(row, name_col).strip()
         if is_empty(name):
             continue
 
-        print(f"NAMES: {len(names)}, VALUES0: {len(values[0])}, VALUES1: {len(values[1])}, VALUES2: {len(values[2])}")
-
-        v1 = cell_value(values[0][i])
-        v2 = cell_value(values[1][i])
-        v3 = cell_value(values[2][i])
+        v1 = safe_get(row, c1)
+        v2 = safe_get(row, c2)
+        v3 = safe_get(row, c3)
 
         has1 = not is_empty(v1)
         has2 = not is_empty(v2)
         has3 = not is_empty(v3)
 
         member = guild.get_member_named(name)
-        if not member:
+        if member is None:
             manual.append(name)
             continue
 
-        if not has1 and not has2 and not has3:
-            kick.append((member, start_row + i))
-        elif not has1 and not has2 and has3:
+        if (not has1) and (not has2) and (not has3):
+            kick.append((member, sheet_row))
+        elif (not has1) and (not has2) and has3:
             warn.append(member)
 
     return warn, kick, manual
@@ -309,13 +353,12 @@ class AFK(commands.Cog):
             print(f"WAVE 1: {wave1}")
             print(f"WAVE 2: {wave2}")
 
-            warn1, kick1, manual1 = get_afk_candidates(
-                ws, guild, wave1
-            )
+            headers = ws.row_values(1)
+            dates = get_last_3_dates_msk()
+            cols = [headers.index(d) + 1 for d in dates]
 
-            warn2, kick2, manual2 = get_afk_candidates(
-                ws, guild, wave2, start_date="09.02"
-            )
+            warn1, kick1, manual1 = get_afk_candidates(ws, guild, wave1, cols, name_col=3)
+            warn2, kick2, manual2 = get_afk_candidates(ws, guild, wave2, cols, name_col=3, start_date="09.02")
 
             print(f"KICK 1: {kick1}")
 
