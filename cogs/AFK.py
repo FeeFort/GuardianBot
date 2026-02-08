@@ -205,7 +205,6 @@ def get_afk_candidates(
         sheet_row = start_row + offset
 
         name = safe_get(row, name_col).strip()
-        print(f"NAME: {name}")
         if is_empty(name):
             continue
 
@@ -349,7 +348,7 @@ class AFK(commands.Cog):
             warn1, kick1, manual1 = get_afk_candidates(ws, guild, wave1, cols, name_col=3)
             warn2, kick2, manual2 = get_afk_candidates(ws, guild, wave2, cols, name_col=3, start_date="09.02.")
 
-            print(f"KICK 1: {kick1}")
+            print(f"MANUAL1: {manual1}")
 
             kick_all = kick1 + kick2
 
