@@ -199,10 +199,13 @@ def get_afk_candidates(
 
     c1, c2, c3 = cols
 
+    print(f"GRID: {grid}")
+
     for offset, row in enumerate(grid):
         sheet_row = start_row + offset
 
         name = safe_get(row, name_col).strip()
+        print(f"NAME: {name}")
         if is_empty(name):
             continue
 
@@ -213,6 +216,7 @@ def get_afk_candidates(
         has1 = not is_empty(v1)
         has2 = not is_empty(v2)
         has3 = not is_empty(v3)
+        print(f"HAS1: {has1}, HAS2: {has2}, HAS3: {has3}")
 
         member = guild.get_member_named(name)
         if member is None:
