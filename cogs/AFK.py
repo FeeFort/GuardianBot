@@ -161,6 +161,8 @@ def get_afk_candidates(
 
     warn, kick, manual = [], [], []
 
+    print(f"VALUES: {values}")
+
     for i, row in enumerate(names):
         name = row[0] if row else ""
         if is_empty(name):
