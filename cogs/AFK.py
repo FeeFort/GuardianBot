@@ -196,13 +196,13 @@ async def apply_policy(ws, warn, kick):
             pass
 
     # кикаем и удаляем строки снизу вверх
-    for member, row in sorted(kick, key=lambda x: x[1], reverse=True):
+    """for member, row in sorted(kick, key=lambda x: x[1], reverse=True):
         try:
             await member.kick(reason="AFK 3 дня подряд")
         except:
             pass
 
-        ws.delete_rows(row)
+        ws.delete_rows(row)"""
 
 async def apply_policy_kick_and_delete(ws, kick_list: list[tuple[disnake.Member, int]]):
     """
@@ -211,11 +211,15 @@ async def apply_policy_kick_and_delete(ws, kick_list: list[tuple[disnake.Member,
     """
     kicked = 0
     failed = 0
+    
+    guild = await self.bot.fetch_guild(1467650949731582220)
+    role = await guild.fetch_role(1467651039695081562)
 
     # 1) Кикаем
     for member, _row in kick_list:
         try:
-            await member.kick(reason="AFK 3 дня подряд")
+            await member.remove_roles(role)
+            #await member.kick(reason="AFK 3 дня подряд")
             kicked += 1
         except:
             failed += 1
@@ -309,6 +313,7 @@ class AFK(commands.Cog):
 
             admin_channel = self.bot.get_channel(1470128018294050818)
             await send_afk_report(admin_channel, ws, kick_all)
+            await apply_policy(ws, warn1 + warn2, None)
 
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             print(f"(AFK) UPDATE DATE: {self.update_date}")
