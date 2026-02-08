@@ -103,9 +103,9 @@ def is_empty(value: str | None) -> bool:
 def get_last_3_dates_msk():
     now = datetime.datetime.now() + datetime.timedelta(hours=3)  # МСК
     return [
-        (now - datetime.timedelta(days=1)).strftime("%d.%m"),
-        (now - datetime.timedelta(days=2)).strftime("%d.%m"),
-        (now - datetime.timedelta(days=3)).strftime("%d.%m"),
+        (now - datetime.timedelta(days=1)).strftime("%d.%m."),
+        (now - datetime.timedelta(days=2)).strftime("%d.%m."),
+        (now - datetime.timedelta(days=3)).strftime("%d.%m."),
     ]
 
 def get_wave_ranges(ws):
