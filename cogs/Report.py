@@ -1,8 +1,11 @@
 import datetime
+import logging
 
 import disnake
 from disnake.ext import commands
 from disnake import TextInputStyle
+
+logger = logging.getLogger(__name__)
 
 # Subclassing the modal.
 class MyModal(disnake.ui.Modal):
@@ -36,10 +39,10 @@ class Report(commands.Cog):
         self.bot = bot
 
     async def cog_load(self):
-        print("Report loaded!")
+        logger.info("Report loaded!")
     
     def cog_unload(self):
-        print("Report unloaded!")
+        logger.info("Report unloaded!")
 
     @commands.Cog.listener()
     async def on_button_click(self, inter):

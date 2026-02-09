@@ -1,11 +1,13 @@
 import datetime
-from datetime import timezone
+import logging
 
 import disnake
 from disnake.ext import commands, tasks
 
 import gspread
 from google.oauth2.service_account import Credentials
+
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -52,12 +54,12 @@ class Top(commands.Cog):
         self.update_date = datetime.date(2026, 2, 10)
 
     async def cog_load(self):
-        print("Top loaded!")
+        logger.info("Top loaded!")
         self.update_top.start()
         self.update_daily_top.start()
 
     def cog_unload(self):
-        print("Top unloaded!")
+        logger.info("Top unloaded!")
         self.update_top.cancel()
         self.update_daily_top.cancel()
 
@@ -185,7 +187,6 @@ class Top(commands.Cog):
                 key=lambda x: x[1],
                 reverse=True
             )[:10]
-            print(f"TOP 10: {top10}")
 
             for place, (key, value) in enumerate(top10, start=1):
                 async for m in guild.fetch_members(limit=None):
@@ -208,7 +209,7 @@ class Top(commands.Cog):
             await channel.send(embed=embed)
             
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
-            print(f"UPDATE DATE: {self.update_date}")
+            logger.info(f"UPDATE DATE: {self.update_date}")
 
             async for m in guild.fetch_members(limit=None):
                 if role_challanger in m.roles and role_not_submit not in m.roles:

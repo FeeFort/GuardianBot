@@ -1,10 +1,13 @@
 import datetime
+import logging
 
 import disnake
 from disnake.ext import commands, tasks
 
 import gspread
 from google.oauth2.service_account import Credentials
+
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -24,11 +27,11 @@ class Notifications(commands.Cog):
         self.bot = bot
     
     async def cog_load(self):
-        print("Notification loaded!")
+        logger.info("Notification loaded!")
         self.notification.start()
 
     def cog_unload(self):
-        print("Notification unloaded!")
+        logger.info("Notification unloaded!")
         self.notification.cancel()
 
     @commands.slash_command(name="test")

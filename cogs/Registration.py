@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 import disnake
 from disnake.ext import commands
@@ -6,6 +7,8 @@ from disnake import TextInputStyle
 
 import gspread
 from google.oauth2.service_account import Credentials
+
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -186,10 +189,10 @@ class Registration(commands.Cog):
         self.bot = bot
 
     async def cog_load(self):
-        print("Registration loaded!")
+        logger.info("Registration loaded!")
 
     def cog_unload(self):
-        print("Registration unloaded!")
+        logger.info("Registration unloaded!")
 
     @commands.slash_command(name="register")
     async def register(self, inter):

@@ -1,4 +1,5 @@
 import datetime
+import logging
 from urllib.parse import urlparse
 
 import disnake
@@ -7,6 +8,8 @@ from disnake.ext import commands
 import gspread
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -45,10 +48,10 @@ class Submit(commands.Cog):
         self.bot = bot
 
     async def cog_load(self):
-        print("Submit loaded!")
+        logger.info("Submit loaded!")
 
     def cog_unload(self):
-        print("Submit unloaded!")
+        logger.info("Submit unloaded!")
 
     @commands.slash_command(name="отчет", description="Отправить отчет о тренировке.")
     async def submit(self, inter, count: int = commands.Param(description="Кол-во сыгранных ДМов"),

@@ -1,8 +1,11 @@
 import disnake
+import logging
 from disnake.ext import commands
 
 import gspread
 from google.oauth2.service_account import Credentials
+
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -22,10 +25,10 @@ class Verification(commands.Cog):
         self.bot = bot
 
     async def cog_load(self):
-        print("Verification loaded!")
+        logger.info("Verification loaded!")
 
     def cog_unload(self):
-        print("Verification unloaded!")
+        logger.info("Verification unloaded!")
 
     @commands.slash_command(description="Responds with 'World'")
     async def hello(self, inter: disnake.ApplicationCommandInteraction):
@@ -53,8 +56,8 @@ class Verification(commands.Cog):
             for i in values:
                 values[values.index(i)] = [i[0].replace(" ", "").lower()]
 
-            print(f"{inter.author.name} - {l in values}")
             if l in values:
+                logger.info(f"{inter.author.name} successfully verficated!")
                 role = await inter.guild.fetch_role(1467651039695081562)
                 role_ver = await inter.guild.fetch_role(1469314317471056044)
                 await inter.author.remove_roles(role_ver)

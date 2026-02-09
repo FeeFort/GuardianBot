@@ -1,8 +1,11 @@
 import datetime
+import logging
 
 import disnake
 from disnake.ext import commands
 from disnake import TextInputStyle
+
+logger = logging.getLogger(__name__)
 
 COLOURS = {
     "Синий": disnake.Colour.blue(),
@@ -54,10 +57,10 @@ class Say(commands.Cog):
         self.bot = bot
 
     async def cog_load(self):
-        print("Say loaded!")
+        logger.info("Say loaded!")
     
     def cog_unload(self):
-        print("Say unloaded!")
+        logger.info("Say unloaded!")
 
     @commands.slash_command(name="say", description="Отправить сообщение от имени бота.")
     async def say(self, inter, *, content: str = commands.Param(default=None, description="Текст сообщения"), 

@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 import disnake
 from disnake.ext import commands, tasks
@@ -7,6 +8,8 @@ from typing import List, Tuple, Optional
 import gspread
 from google.oauth2.service_account import Credentials
 from gspread.utils import rowcol_to_a1
+
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -289,7 +292,7 @@ async def apply_policy_kick_and_delete(
             roles_removed += 1
         except Exception as e:
             failed_roles += 1
-            print(f"[AFK] remove_roles failed for {member} ({member.id}): {e!r}")
+            logger.error(f"remove_roles failed for {member} ({member.id}): {e!r}")
 
     rows_to_delete = (
         [row for _, row in kick_list] +
@@ -302,7 +305,7 @@ async def apply_policy_kick_and_delete(
             rows_deleted += 1
         except Exception as e:
             failed_rows += 1
-            print(f"[AFK] delete_rows failed for row={row}: {e!r}")
+            logger.error(f"delete_rows failed for row={row}: {e!r}")
 
     return {
         "roles_removed": roles_removed,
@@ -397,11 +400,11 @@ class AFK(commands.Cog):
         self.update_date = datetime.date(2026, 2, 10)
     
     async def cog_load(self):
-        print("AFK loaded!")
+        logger.info("AFK loaded!")
         self.afk.start()
 
     def cog_unload(self):
-        print("AFK unloaded!")
+        logger.info("AFK unloaded!")
         self.afk.cancel()
 
     @tasks.loop(minutes=1)
@@ -429,7 +432,7 @@ class AFK(commands.Cog):
             #await apply_policy(ws, warn1 + warn2, None)
 
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
-            print(f"(AFK) UPDATE DATE: {self.update_date}")
+            logger.info(f"UPDATE DATE: {self.update_date}")
 
 def setup(bot):
     bot.add_cog(AFK(bot))
