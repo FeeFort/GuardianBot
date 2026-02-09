@@ -50,14 +50,6 @@ class ConfirmKickView(disnake.ui.View):
             view=self
         )
 
-    async def interaction_check(self, inter: disnake.MessageInteraction) -> bool:
-        # Тут можешь ограничить по ролям/правам (очень рекомендую)
-        # Например: только админы
-        if inter.guild_permissions.kick_members:
-            return True
-        await inter.response.send_message("Недостаточно прав.", ephemeral=True)
-        return False
-
     @disnake.ui.button(label="(internal)", style=disnake.ButtonStyle.secondary, custom_id="afk_confirm_yes", disabled=True)
     async def _hidden_yes(self, *_):  # Заглушка, реальную кнопку добавляем динамически
         pass
