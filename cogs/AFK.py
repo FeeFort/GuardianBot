@@ -19,7 +19,7 @@ creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPES)
 client = gspread.authorize(creds)
 
 sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBVJaNUKOZ6Me3l7Ey2iM-0X1f7SqvPBoQ/edit?gid=1654540911#gid=1654540911")
-ws = sheet.worksheet("LEADERBOARD")
+ws = sheet.worksheet("LEADERBOARDTEST")
 
 class ConfirmKickView(disnake.ui.View):
     def __init__(self, ws, kick_list: list[tuple[disnake.Member, int]], *, timeout=600):
@@ -87,7 +87,7 @@ class ConfirmKickView(disnake.ui.View):
             # Применяем политику (кик + удаление строк)
             await inter.response.send_message("Ок, выполняю кик и чистку таблицы…", ephemeral=True)
 
-            kicked, failed = await apply_policy_kick_and_delete(self.ws, self.kick_list)
+            statisctics = await apply_policy_kick_and_delete(self.ws, inter.guild, self.kick_list)
 
             # Блокируем кнопки
             for item in self.children:
@@ -95,7 +95,7 @@ class ConfirmKickView(disnake.ui.View):
                     item.disabled = True
 
             await inter.message.edit(
-                content=f" Готово. Кикнуто: {kicked}. Ошибок: {failed}.",
+                content=f"Готово.\n\nКикнуто успешно: {statisctics["roles_removed"]}\nСамостоятельно вышли с сервера: {statisctics["left_server"]}\nНе удалось кикнуть: {statisctics["failed_roles"]}\nУдалено из таблицы: {statisctics["rows_deleted"]}\nНе удалось удалить: {statisctics["failed_rows"]}",
                 view=self
             )
 
@@ -179,6 +179,13 @@ def get_afk_candidates(
     a1_start = rowcol_to_a1(start_row, min_col)
     a1_end = rowcol_to_a1(end_row, max_col)
 
+    AFK_WHITELIST_IDS = {
+        359586978234368003,  # etnaa
+        246313643900141568,  # pa1ka
+        435463855250866176,  # dreammaker
+        368672308065337345,  # astedoto
+    }
+
     grid = ws.get(f"{a1_start}:{a1_end}")
 
     def safe_get(row: list, absolute_col: int) -> str:
@@ -200,8 +207,6 @@ def get_afk_candidates(
 
     c1, c2, c3 = cols
 
-    print(f"GRID: {grid}")
-
     for offset, row in enumerate(grid):
         sheet_row = start_row + offset
 
@@ -216,15 +221,20 @@ def get_afk_candidates(
         has1 = not is_empty(v1)
         has2 = not is_empty(v2)
         has3 = not is_empty(v3)
-        print(f"HAS1: {has1}, HAS2: {has2}, HAS3: {has3}")
+
+        member = None
 
         for m in members:
             if m.name == name or m.display_name == name:
                 member = m
                 break
-            else:
-                member = None
-                manual.append(name)
+
+        if member is  None:
+            manual.append(name)
+            continue
+
+        if member.id in AFK_WHITELIST_IDS:
+            continue
 
         if (not has1) and (not has2) and (not has3):
             kick.append((member, sheet_row))
@@ -251,29 +261,53 @@ async def apply_policy(ws, warn, kick):
 
         ws.delete_rows(row)"""
 
-async def apply_policy_kick_and_delete(ws, kick_list: list[tuple[disnake.Member, int]]):
+async def apply_policy_kick_and_delete(ws, guild, kick_list: list[tuple[disnake.Member | None, int]]):
     """
-    kick_list: [(member, row_index_in_sheet), ...]
+    kick_list: [(member_or_none, row_index_in_sheet), ...]
     Важно: удаляем строки СНИЗУ ВВЕРХ.
     """
-    kicked = 0
-    failed = 0
+    roles_removed = 0
+    left_server = 0
+    failed_roles = 0
 
+    rows_deleted = 0
+    failed_rows = 0
+
+    role_id = 1467651039695081562
+
+    role = guild.get_role(role_id)
+    if role is None:
+        role = await guild.fetch_role(role_id)  # запасной вариант
+
+    # 1) Снимаем роль (если участник ещё на сервере)
     for member, _row in kick_list:
-        try:
-            #await member.remove_roles(role)
-            #await member.kick(reason="AFK 3 дня подряд")
-            kicked += 1
-        except:
-            failed += 1
+        if member is None:
+            left_server += 1
+            continue
 
+        try:
+            await member.remove_roles(role, reason="AFK 3 дня подряд")
+            roles_removed += 1
+        except Exception as e:
+            failed_roles += 1
+            print(f"[AFK] remove_roles failed for {member} ({member.id}): {e!r}")
+
+    # 2) Удаляем строки снизу вверх (это главный эффект очистки таблицы)
     for _member, row in sorted(kick_list, key=lambda x: x[1], reverse=True):
         try:
             ws.delete_rows(row)
-        except:
-            failed += 1
+            rows_deleted += 1
+        except Exception as e:
+            failed_rows += 1
+            print(f"[AFK] delete_rows failed for row={row}: {e!r}")
 
-    return kicked, failed
+    return {
+        "roles_removed": roles_removed,
+        "left_server": left_server,
+        "failed_roles": failed_roles,
+        "rows_deleted": rows_deleted,
+        "failed_rows": failed_rows,
+    }
 
 def build_afk_embeds(
     kick_list: list[tuple[disnake.Member, int]],
@@ -342,8 +376,6 @@ class AFK(commands.Cog):
 
         if now_date == self.update_date:
             wave1, wave2 = get_wave_ranges(ws)
-            print(f"WAVE 1: {wave1}")
-            print(f"WAVE 2: {wave2}")
 
             headers = ws.row_values(1)
             dates = get_last_3_dates_msk()
@@ -353,10 +385,6 @@ class AFK(commands.Cog):
 
             warn1, kick1, manual1 = get_afk_candidates(ws, guild, members, wave1, cols, name_col=3)
             warn2, kick2, manual2 = get_afk_candidates(ws, guild, members, wave2, cols, name_col=3, start_date="09.02.")
-
-            print(f"KICK1: {kick1}")
-            print(f"WARN1: {warn1}")
-            print(f"MANUAL1: {manual1}")
 
             kick_all = kick1 + kick2
 
