@@ -76,11 +76,6 @@ class Say(commands.Cog):
             await inter.channel.send(content=content)
         else:
             await inter.channel.send(content=content, embed=embed)
-
-    @commands.slash_command(name="test1111")
-    async def test(self, inter):
-        await inter.response.defer()
-        await inter.followup.send("pashel nahuy")
         
 
 def setup(bot):
