@@ -22,10 +22,11 @@ sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBV
 ws = sheet.worksheet("LEADERBOARDTEST")
 
 class ConfirmKickView(disnake.ui.View):
-    def __init__(self, ws, kick_list: list[tuple[disnake.Member, int]], *, timeout=600):
+    def __init__(self, ws, kick_list: list[tuple[disnake.Member, int]], left_server, *, timeout=600):
         super().__init__(timeout=timeout)
         self.ws = ws
         self.kick_list = kick_list  # [(member, row), ...]
+        self.left_server = left_server
         self.confirming = False
 
     def is_empty(self) -> bool:
@@ -87,7 +88,7 @@ class ConfirmKickView(disnake.ui.View):
             # Применяем политику (кик + удаление строк)
             await inter.response.send_message("Ок, выполняю кик и чистку таблицы…", ephemeral=True)
 
-            statisctics = await apply_policy_kick_and_delete(self.ws, inter.guild, self.kick_list)
+            statisctics = await apply_policy_kick_and_delete(self.ws, inter.guild, self.kick_list, self.left_server)
 
             # Блокируем кнопки
             for item in self.children:
@@ -203,7 +204,7 @@ def get_afk_candidates(
 
     warn: list[disnake.Member] = []
     kick: list[tuple[disnake.Member, int]] = []
-    manual: list[str] = []
+    left_server: list[str] = []
 
     c1, c2, c3 = cols
 
@@ -229,8 +230,8 @@ def get_afk_candidates(
                 member = m
                 break
 
-        if member is  None:
-            manual.append(name)
+        if member is None:
+            left_server.append(sheet_row)
             continue
 
         if member.id in AFK_WHITELIST_IDS:
@@ -241,7 +242,7 @@ def get_afk_candidates(
         elif (not has1) and (not has2) and has3:
             warn.append(member)
 
-    return warn, kick, manual
+    return warn, kick, left_server
 
 async def apply_policy(ws, warn, kick):
     for member in warn:
@@ -261,13 +262,20 @@ async def apply_policy(ws, warn, kick):
 
         ws.delete_rows(row)"""
 
-async def apply_policy_kick_and_delete(ws, guild, kick_list: list[tuple[disnake.Member | None, int]]):
+async def apply_policy_kick_and_delete(
+    ws,
+    guild: disnake.Guild,
+    kick_list: list[tuple[disnake.Member, int]],
+    left_server_rows: list[int],
+):
     """
-    kick_list: [(member_or_none, row_index_in_sheet), ...]
-    Важно: удаляем строки СНИЗУ ВВЕРХ.
+    kick_list: [(member, row)] — участники на сервере (снимаем роль + удаляем строку)
+    left_server_rows: [row, ...] — участники, которые уже вышли (только удаляем строку)
+
+    ВАЖНО: строки всегда удаляются СНИЗУ ВВЕРХ.
     """
+
     roles_removed = 0
-    left_server = 0
     failed_roles = 0
 
     rows_deleted = 0
@@ -277,14 +285,10 @@ async def apply_policy_kick_and_delete(ws, guild, kick_list: list[tuple[disnake.
 
     role = guild.get_role(role_id)
     if role is None:
-        role = await guild.fetch_role(role_id)  # запасной вариант
+        role = await guild.fetch_role(role_id)
 
-    # 1) Снимаем роль (если участник ещё на сервере)
+    # 1) Снимаем роль у тех, кто ещё на сервере
     for member, _row in kick_list:
-        if member is None:
-            left_server += 1
-            continue
-
         try:
             await member.remove_roles(role, reason="AFK 3 дня подряд")
             roles_removed += 1
@@ -292,8 +296,13 @@ async def apply_policy_kick_and_delete(ws, guild, kick_list: list[tuple[disnake.
             failed_roles += 1
             print(f"[AFK] remove_roles failed for {member} ({member.id}): {e!r}")
 
-    # 2) Удаляем строки снизу вверх (это главный эффект очистки таблицы)
-    for _member, row in sorted(kick_list, key=lambda x: x[1], reverse=True):
+    # 2) Удаляем строки (kick + left_server) снизу вверх
+    rows_to_delete = (
+        [row for _, row in kick_list] +
+        left_server_rows
+    )
+
+    for row in sorted(set(rows_to_delete), reverse=True):
         try:
             ws.delete_rows(row)
             rows_deleted += 1
@@ -303,7 +312,7 @@ async def apply_policy_kick_and_delete(ws, guild, kick_list: list[tuple[disnake.
 
     return {
         "roles_removed": roles_removed,
-        "left_server": left_server,
+        "left_server": len(left_server_rows),
         "failed_roles": failed_roles,
         "rows_deleted": rows_deleted,
         "failed_rows": failed_rows,
@@ -311,42 +320,75 @@ async def apply_policy_kick_and_delete(ws, guild, kick_list: list[tuple[disnake.
 
 def build_afk_embeds(
     kick_list: list[tuple[disnake.Member, int]],
+    left_server_rows: list[int],
     *,
     title: str = "AFK-кандидаты (3 дня без отчётов)",
     per_embed: int = 30
 ) -> list[disnake.Embed]:
     """
-    kick_list: [(member, row), ...]
-    per_embed: сколько строк с участниками класть в один embed (30 обычно безопасно по лимитам).
+    kick_list: [(member, row), ...] — участники на сервере (AFK)
+    left_server_rows: [row, ...] — участники, уже вышедшие с сервера
     """
-    if not kick_list:
-        e = disnake.Embed(title=title, description="Никого кикать не надо ")
-        return [e]
 
     embeds: list[disnake.Embed] = []
-    total = len(kick_list)
 
-    for start in range(0, total, per_embed):
-        chunk = kick_list[start:start + per_embed]
-
-        # Важно: не пихаем тысячи символов в одно поле — держим аккуратно
-        lines = [f"• {m} — строка {row}" for (m, row) in chunk]
-        page = (start // per_embed) + 1
+    # =========================
+    # 1) AFK (kick_list)
+    # =========================
+    if kick_list:
+        total = len(kick_list)
         pages = (total + per_embed - 1) // per_embed
 
-        e = disnake.Embed(
-            title=title,
-            description=f"Страница **{page}/{pages}** • Всего: **{total}**"
+        for start in range(0, total, per_embed):
+            chunk = kick_list[start:start + per_embed]
+            page = (start // per_embed) + 1
+
+            lines = [f"• {member} — строка {row}" for member, row in chunk]
+
+            e = disnake.Embed(
+                title=title,
+                description=f"Страница **{page}/{pages}** • Всего AFK: **{total}**"
+            )
+            e.add_field(name="AFK-участники", value="\n".join(lines), inline=False)
+            embeds.append(e)
+    else:
+        embeds.append(
+            disnake.Embed(
+                title=title,
+                description="AFK-участников нет "
+            )
         )
-        e.add_field(name="Список", value="\n".join(lines), inline=False)
-        embeds.append(e)
+
+    # =========================
+    # 2) Left server
+    # =========================
+    if left_server_rows:
+        total = len(left_server_rows)
+        pages = (total + per_embed - 1) // per_embed
+
+        for start in range(0, total, per_embed):
+            chunk = left_server_rows[start:start + per_embed]
+            page = (start // per_embed) + 1
+
+            lines = [f"• строка {row}" for row in chunk]
+
+            e = disnake.Embed(
+                title="Участники, вышедшие с сервера",
+                description=f"Страница **{page}/{pages}** • Всего: **{total}**"
+            )
+            e.add_field(
+                name="Будут удалены из таблицы",
+                value="\n".join(lines),
+                inline=False
+            )
+            embeds.append(e)
 
     return embeds
 
-async def send_afk_report(admin_channel: disnake.TextChannel, ws, kick_list):
-    embeds = build_afk_embeds(kick_list, per_embed=30)
+async def send_afk_report(admin_channel: disnake.TextChannel, ws, kick_list, left_server):
+    embeds = build_afk_embeds(kick_list, left_server, per_embed=30)
 
-    view = ConfirmKickView(ws, kick_list)  # твоя View: "Кикнуть всех" -> подтверждение -> apply_policy
+    view = ConfirmKickView(ws, kick_list, left_server)  # твоя View: "Кикнуть всех" -> подтверждение -> apply_policy
 
     # 1) Первая страница с кнопкой
     await admin_channel.send(embed=embeds[0], view=view)
@@ -383,13 +425,13 @@ class AFK(commands.Cog):
             members = []
             async for m in guild.fetch_members(limit=None): members.append(m)
 
-            warn1, kick1, manual1 = get_afk_candidates(ws, guild, members, wave1, cols, name_col=3)
-            warn2, kick2, manual2 = get_afk_candidates(ws, guild, members, wave2, cols, name_col=3, start_date="09.02.")
+            warn1, kick1, left_server1 = get_afk_candidates(ws, guild, members, wave1, cols, name_col=3)
+            warn2, kick2, left_server2 = get_afk_candidates(ws, guild, members, wave2, cols, name_col=3, start_date="09.02.")
 
             kick_all = kick1 + kick2
 
             admin_channel = await guild.fetch_channel(1470128018294050818)
-            await send_afk_report(admin_channel, ws, kick_all)
+            await send_afk_report(admin_channel, ws, kick_all, left_server1 + left_server2)
             await apply_policy(ws, warn1 + warn2, None)
 
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
