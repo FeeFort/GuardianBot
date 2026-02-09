@@ -52,9 +52,10 @@ class Say(commands.Cog):
     @commands.slash_command(name="say", description="Отправить сообщение от имени бота.")
     async def say(self, inter, *, content: str = commands.Param(default="", description="Текст сообщения"), 
                   title: str = commands.Param(default=None, description="Заголовок Embed"), 
-                  description: str = commands.Param(default=None, description="Описание Embed. Для переноса строки используй \\n"),
+                  description: str = commands.Param(default=None, description="Описание Embed. Для переноса строки используй \\n."),
                   colour: str = commands.Param(default=None, description="Цвет Embed", choices=COLOUR_NAMES),
-                  image: str = commands.Param(default=None, description="Ссылка на изображение Embed")):
+                  image: str = commands.Param(default=None, description="Ссылка на изображение Embed"),
+                  reply_to: int = commands.Param(default=None, description="Ответить на сообщение пользователя. Нужен ID сообщения.")):
         await inter.response.defer(ephemeral=True)
 
         embed = disnake.Embed()
@@ -72,8 +73,14 @@ class Say(commands.Cog):
             embed.set_image(url=image)
 
         await inter.followup.send("Sended!")
-        if title is None and description is None and image is None:
+        if title is None and description is None and image is None and reply_to is None:
             await inter.channel.send(content=content)
+        elif title is None and description is None and image is None and reply_to is not None:
+            message = await inter.channel.fetch_message(reply_to)
+            await message.reply(content=content)
+        elif reply_to is not None:
+            message = await inter.channel.fetch_message(reply_to)
+            await message.reply(content=content, embed=embed)
         else:
             await inter.channel.send(content=content, embed=embed)
         
