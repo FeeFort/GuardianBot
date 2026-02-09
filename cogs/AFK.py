@@ -22,75 +22,82 @@ sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBV
 ws = sheet.worksheet("LEADERBOARDTEST")
 
 class ConfirmKickView(disnake.ui.View):
-    def __init__(self, ws, kick_list: list[tuple[disnake.Member, int]], left_server, *, timeout=600):
+    def __init__(self, ws, kick_list, left_server, *, timeout=600):
         super().__init__(timeout=timeout)
         self.ws = ws
-        self.kick_list = kick_list  # [(member, row), ...]
-        self.left_server = left_server
-        self.confirming = False
+        self.kick_list = kick_list              # [(member, row), ...]
+        self.left_server = left_server          # [row, ...]
+        self.confirm_mode = False
+
+        # На старте кнопки подтверждения скрыты/выключены
+        self.btn_yes.disabled = True
+        self.btn_no.disabled = True
 
     def is_empty(self) -> bool:
-        return not self.kick_list
+        return not self.kick_list and not self.left_server
 
-    @disnake.ui.button(label="Кикнуть всех", style=disnake.ButtonStyle.danger)
+    @disnake.ui.button(label="Кикнуть всех", style=disnake.ButtonStyle.danger, custom_id="afk_kick_all")
     async def kick_all(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         if self.is_empty():
             return await inter.response.send_message("Список пуст — кикать некого.", ephemeral=True)
 
-        # Переключаемся в режим подтверждения
-        self.confirming = True
+        self.confirm_mode = True
         button.disabled = True
 
-        # Добавляем кнопки подтверждения
-        self.add_item(disnake.ui.Button(label="Да, кикнуть", style=disnake.ButtonStyle.danger, custom_id="afk_confirm_yes"))
-        self.add_item(disnake.ui.Button(label="Отмена", style=disnake.ButtonStyle.secondary, custom_id="afk_confirm_no"))
+        # включаем подтверждение
+        self.btn_yes.disabled = False
+        self.btn_no.disabled = False
 
         await inter.response.edit_message(
-            content=" Ты точно хочешь кикнуть всех из списка AFK и удалить их строки из таблицы?",
+            content="⚠️ Ты точно хочешь кикнуть всех из списка AFK и удалить их строки из таблицы?",
             view=self
         )
 
-    @disnake.ui.button(label="(internal)", style=disnake.ButtonStyle.secondary, custom_id="afk_confirm_yes", disabled=True)
-    async def _hidden_yes(self, *_):  # Заглушка, реальную кнопку добавляем динамически
-        pass
+    @disnake.ui.button(label="Да, кикнуть", style=disnake.ButtonStyle.danger, custom_id="afk_confirm_yes")
+    async def btn_yes(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
+        # можно ещё раз проверить права
+        if not inter.guild_permissions.kick_members:
+            return await inter.response.send_message("Недостаточно прав.", ephemeral=True)
 
-    @disnake.ui.button(label="(internal)", style=disnake.ButtonStyle.secondary, custom_id="afk_confirm_no", disabled=True)
-    async def _hidden_no(self, *_):
-        pass
+        await inter.response.send_message("Ок, выполняю кик и чистку таблицы…", ephemeral=True)
 
-    async def on_timeout(self):
-        # По таймауту просто дизейблим кнопки
+        stats = await apply_policy_kick_and_delete(
+            self.ws,
+            inter.guild,
+            self.kick_list,
+            self.left_server
+        )
+
+        # отключаем все кнопки
         for item in self.children:
             if isinstance(item, disnake.ui.Button):
                 item.disabled = True
 
-    async def on_button_click(self, inter: disnake.MessageInteraction):
-        # disnake сам вызывает колбэки декораторов, но динамически добавленные кнопки удобнее ловить так
-        cid = inter.data.get("custom_id")
+        await inter.message.edit(
+            content=(
+                "✅ Готово.\n\n"
+                f"Роль снята успешно: {stats['roles_removed']}\n"
+                f"Самостоятельно вышли: {stats['left_server']}\n"
+                f"Не удалось снять роль: {stats['failed_roles']}\n"
+                f"Удалено из таблицы: {stats['rows_deleted']}\n"
+                f"Не удалось удалить строки: {stats['failed_rows']}"
+            ),
+            view=self
+        )
 
-        if cid == "afk_confirm_no":
-            # Отменяем
-            for item in self.children:
-                if isinstance(item, disnake.ui.Button):
-                    item.disabled = True
-            await inter.response.edit_message(content=" Отменено.", view=self)
-            return
+    @disnake.ui.button(label="Отмена", style=disnake.ButtonStyle.secondary, custom_id="afk_confirm_no")
+    async def btn_no(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
+        # отключаем все кнопки
+        for item in self.children:
+            if isinstance(item, disnake.ui.Button):
+                item.disabled = True
 
-        if cid == "afk_confirm_yes":
-            # Применяем политику (кик + удаление строк)
-            await inter.response.send_message("Ок, выполняю кик и чистку таблицы…", ephemeral=True)
+        await inter.response.edit_message(content="❎ Отменено.", view=self)
 
-            statisctics = await apply_policy_kick_and_delete(self.ws, inter.guild, self.kick_list, self.left_server)
-
-            # Блокируем кнопки
-            for item in self.children:
-                if isinstance(item, disnake.ui.Button):
-                    item.disabled = True
-
-            await inter.message.edit(
-                content=f"Готово.\n\nКикнуто успешно: {statisctics["roles_removed"]}\nСамостоятельно вышли с сервера: {statisctics["left_server"]}\nНе удалось кикнуть: {statisctics["failed_roles"]}\nУдалено из таблицы: {statisctics["rows_deleted"]}\nНе удалось удалить: {statisctics["failed_rows"]}",
-                view=self
-            )
+    async def on_timeout(self):
+        for item in self.children:
+            if isinstance(item, disnake.ui.Button):
+                item.disabled = True
 
 def is_empty(value: str | None) -> bool:
     return value is None or str(value).strip() == ""
