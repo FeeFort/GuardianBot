@@ -62,6 +62,7 @@ class Say(commands.Cog):
             embed.title = title
         
         if description is not None:
+            description = description.replace("\\n", "\n")
             embed.description = description
         
         if colour is not None:
