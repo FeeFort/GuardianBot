@@ -55,10 +55,6 @@ class ConfirmKickView(disnake.ui.View):
 
     @disnake.ui.button(label="Да, кикнуть", style=disnake.ButtonStyle.danger, custom_id="afk_confirm_yes")
     async def btn_yes(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
-        # можно ещё раз проверить права
-        if not inter.guild_permissions.kick_members:
-            return await inter.response.send_message("Недостаточно прав.", ephemeral=True)
-
         await inter.response.send_message("Ок, выполняю кик и чистку таблицы…", ephemeral=True)
 
         stats = await apply_policy_kick_and_delete(
