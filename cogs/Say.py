@@ -55,7 +55,7 @@ class Say(commands.Cog):
                   description: str = commands.Param(default=None, description="Описание Embed. Для переноса строки используй \\n"),
                   colour: str = commands.Param(default=None, description="Цвет Embed", choices=COLOUR_NAMES),
                   image: str = commands.Param(default=None, description="Ссылка на изображение Embed")):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=True)
 
         embed = disnake.Embed()
         if title is not None:
