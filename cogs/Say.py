@@ -52,6 +52,8 @@ COLOURS = {
     "Жёлтый": disnake.Colour.yellow(),
 }
 
+COLOUR_NAMES = list(COLOURS.keys())
+
 class Say(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -63,10 +65,10 @@ class Say(commands.Cog):
         logger.info("Say unloaded!")
 
     @commands.slash_command(name="say", description="Отправить сообщение от имени бота.")
-    async def say(self, inter, *, content: str = commands.Param(default=None, description="Текст сообщения"), 
+    async def say(self, inter, *, content: str = commands.Param(default="", description="Текст сообщения"), 
                   title: str = commands.Param(default=None, description="Заголовок Embed"), 
                   description: str = commands.Param(default=None, description="Описание Embed. Для переноса строки используй \\n"),
-                  colour: disnake.Colour = commands.Param(default=None, description="Цвет Embed", choices=COLOURS),
+                  colour: str = commands.Param(default=None, description="Цвет Embed", choices=COLOUR_NAMES),
                   image: str = commands.Param(default=None, description="Ссылка на изображение Embed")):
         await inter.response.defer()
 
