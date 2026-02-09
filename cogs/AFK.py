@@ -282,7 +282,7 @@ async def apply_policy_kick_and_delete(
     # 1) Снимаем роль у тех, кто ещё на сервере
     for member, _row in kick_list:
         try:
-            await member.remove_roles(role, reason="AFK 3 дня подряд")
+            #await member.remove_roles(role, reason="AFK 3 дня подряд")
             roles_removed += 1
         except Exception as e:
             failed_roles += 1
