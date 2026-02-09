@@ -430,7 +430,7 @@ class AFK(commands.Cog):
 
             admin_channel = await guild.fetch_channel(1470128018294050818)
             await send_afk_report(admin_channel, ws, kick_all, left_server1 + left_server2)
-            #await apply_policy(ws, warn1 + warn2, None)
+            await apply_policy(ws, warn1 + warn2, None)
 
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             logger.info(f"UPDATE DATE: {self.update_date}")
