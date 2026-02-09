@@ -288,7 +288,7 @@ async def apply_policy_kick_and_delete(
 
     for member, _row in kick_list:
         try:
-            await member.remove_roles(role, reason="AFK 3 дня подряд")
+            await member.remove_roles(role, reason="AFK более 3 дней подряд")
             roles_removed += 1
         except Exception as e:
             failed_roles += 1
