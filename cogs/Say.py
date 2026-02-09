@@ -9,47 +9,32 @@ logger = logging.getLogger(__name__)
 
 COLOURS = {
     "Синий": disnake.Colour.blue(),
-    "Блёрпл (Discord-синий)": disnake.Colour.blurple(),
-    "Фирменный зелёный": disnake.Colour.brand_green(),
-    "Фирменный красный": disnake.Colour.brand_red(),
-
-    "Тёмно-синий": disnake.Colour.dark_blue(),
-    "Тёмный embed": disnake.Colour.dark_embed(),
-    "Тёмно-золотой": disnake.Colour.dark_gold(),
-    "Тёмно-серый": disnake.Colour.dark_gray(),
-    "Тёмно-зелёный": disnake.Colour.dark_green(),
-    "Тёмно-серый (grey)": disnake.Colour.dark_grey(),
-    "Тёмно-пурпурный": disnake.Colour.dark_magenta(),
-    "Тёмно-оранжевый": disnake.Colour.dark_orange(),
-    "Тёмно-фиолетовый": disnake.Colour.dark_purple(),
-    "Тёмно-красный": disnake.Colour.dark_red(),
-    "Тёмно-бирюзовый": disnake.Colour.dark_teal(),
-    "Тёмная тема Discord": disnake.Colour.dark_theme(),
-
-    "Очень тёмно-серый": disnake.Colour.darker_gray(),
-    "Очень тёмно-серый (grey)": disnake.Colour.darker_grey(),
-    "Цвет по умолчанию": disnake.Colour.default(),
-
+    "Блёрпл": disnake.Colour.blurple(),
+    "Зелёный": disnake.Colour.green(),
+    "Красный": disnake.Colour.red(),
+    "Жёлтый": disnake.Colour.yellow(),
+    "Оранжевый": disnake.Colour.orange(),
+    "Фиолетовый": disnake.Colour.purple(),
+    "Бирюзовый": disnake.Colour.teal(),
     "Фуксия": disnake.Colour.fuchsia(),
     "Золотой": disnake.Colour.gold(),
-    "Зелёный": disnake.Colour.green(),
+
+    "Фирменный зелёный": disnake.Colour.brand_green(),
+    "Фирменный красный": disnake.Colour.brand_red(),
     "Серо-фиолетовый (Greyple)": disnake.Colour.greyple(),
-
-    "Светлый embed": disnake.Colour.light_embed(),
-    "Светло-серый": disnake.Colour.light_gray(),
-    "Светло-серый (grey)": disnake.Colour.light_grey(),
-    "Очень светло-серый": disnake.Colour.lighter_gray(),
-    "Очень светло-серый (grey)": disnake.Colour.lighter_grey(),
-
-    "Пурпурный": disnake.Colour.magenta(),
     "Оригинальный blurple": disnake.Colour.og_blurple(),
     "Старый blurple": disnake.Colour.old_blurple(),
 
-    "Оранжевый": disnake.Colour.orange(),
-    "Фиолетовый": disnake.Colour.purple(),
-    "Красный": disnake.Colour.red(),
-    "Бирюзовый": disnake.Colour.teal(),
-    "Жёлтый": disnake.Colour.yellow(),
+    "Тёмно-синий": disnake.Colour.dark_blue(),
+    "Тёмно-зелёный": disnake.Colour.dark_green(),
+    "Тёмно-красный": disnake.Colour.dark_red(),
+    "Тёмно-пурпурный": disnake.Colour.dark_purple(),
+    "Тёмно-оранжевый": disnake.Colour.dark_orange(),
+
+    "Тёмная тема Discord": disnake.Colour.dark_theme(),
+    "Тёмный embed": disnake.Colour.dark_embed(),
+    "Светлый embed": disnake.Colour.light_embed(),
+    "Цвет по умолчанию": disnake.Colour.default(),
 }
 
 COLOUR_NAMES = list(COLOURS.keys())
