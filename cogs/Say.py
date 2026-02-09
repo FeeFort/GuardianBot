@@ -55,7 +55,7 @@ class Say(commands.Cog):
                   description: str = commands.Param(default=None, description="Описание Embed. Для переноса строки используй \\n."),
                   colour: str = commands.Param(default=None, description="Цвет Embed", choices=COLOUR_NAMES),
                   image: str = commands.Param(default=None, description="Ссылка на изображение Embed"),
-                  reply_to: int = commands.Param(default=None, description="Ответить на сообщение пользователя. Нужен ID сообщения.")):
+                  reply_to: str = commands.Param(default=None, description="Ответить на сообщение пользователя. Нужен ID сообщения.")):
         await inter.response.defer(ephemeral=True)
 
         embed = disnake.Embed()
@@ -76,10 +76,10 @@ class Say(commands.Cog):
         if title is None and description is None and image is None and reply_to is None:
             await inter.channel.send(content=content)
         elif title is None and description is None and image is None and reply_to is not None:
-            message = await inter.channel.fetch_message(reply_to)
+            message = await inter.channel.fetch_message(int(reply_to))
             await message.reply(content=content)
         elif reply_to is not None:
-            message = await inter.channel.fetch_message(reply_to)
+            message = await inter.channel.fetch_message(int(reply_to))
             await message.reply(content=content, embed=embed)
         else:
             await inter.channel.send(content=content, embed=embed)
