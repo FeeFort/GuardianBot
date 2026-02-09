@@ -65,7 +65,7 @@ class Say(commands.Cog):
             embed.description = description
         
         if colour is not None:
-            embed.colour = colour
+            embed.colour = COLOURS[colour]
         
         if image is not None:
             embed.set_image(url=image)
