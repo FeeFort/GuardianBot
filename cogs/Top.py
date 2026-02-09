@@ -56,7 +56,7 @@ class Top(commands.Cog):
         self.update_top.start()
         self.update_daily_top.start()
 
-    async def cog_unload(self):
+    def cog_unload(self):
         print("Top unloaded!")
         self.update_top.cancel()
         self.update_daily_top.cancel()
