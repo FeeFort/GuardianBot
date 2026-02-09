@@ -24,12 +24,13 @@ handler.setFormatter(
 )
 
 logging.basicConfig(level=logging.INFO, handlers=[handler], force=True)
+logger = logging.getLogger(__name__)
 
 bot = commands.InteractionBot(intents=disnake.Intents.all())
 
 @bot.event
 async def on_ready():
-    print("im ready")
+    logger.info("im ready")
 
 @bot.slash_command(name="load", description="Загружает модуль.")
 async def load(inter, cog: str):
@@ -39,7 +40,7 @@ async def load(inter, cog: str):
         bot.load_extension(f"cogs.{cog}")
         await inter.followup.send(f"✅ Модуль `{cog}` успешно загружен!")
     except Exception as e:
-        print(e)
+        logger.error(e)
         await inter.followup.send(f"❌ При загрузке модуля `{cog}` произошла ошибка!")
 
 @bot.slash_command(name="reload", description="Перезагружает модуль.")
@@ -50,7 +51,8 @@ async def load(inter, cog: str):
         bot.unload_extension(f"cogs.{cog}")
         bot.load_extension(f"cogs.{cog}")
         await inter.followup.send(f"✅ Модуль `{cog}` успешно перезагружен!")
-    except:
+    except Exception as e:
+        logger.error(e)
         await inter.followup.send(f"❌ При перезагрузке модуля `{cog}` произошла ошибка!")
 
 @bot.slash_command(name="unload", description="Отгружает модуль.")
@@ -60,7 +62,8 @@ async def load(inter, cog: str):
     try:
         bot.unload_extension(f"cogs.{cog}")
         await inter.followup.send(f"✅ Модуль `{cog}` успешно отгружен!")
-    except:
+    except Exception as e:
+        logger.error(e)
         await inter.followup.send(f"❌ При отгрузке модуля `{cog}` произошла ошибка!")
 
     
