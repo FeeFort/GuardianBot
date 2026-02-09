@@ -188,6 +188,9 @@ class Registration(commands.Cog):
     async def cog_load(self):
         print("Registration loaded!")
 
+    def cog_unload(self):
+        print("Registration unloaded!")
+
     @commands.slash_command(name="register")
     async def register(self, inter):
         await inter.response.defer()

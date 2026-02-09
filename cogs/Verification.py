@@ -24,6 +24,9 @@ class Verification(commands.Cog):
     async def cog_load(self):
         print("Verification loaded!")
 
+    def cog_unload(self):
+        print("Verification unloaded!")
+
     @commands.slash_command(description="Responds with 'World'")
     async def hello(self, inter: disnake.ApplicationCommandInteraction):
         await inter.response.defer()

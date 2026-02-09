@@ -395,7 +395,7 @@ async def send_afk_report(admin_channel: disnake.TextChannel, ws, kick_list, lef
 class AFK(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 9)
+        self.update_date = datetime.date(2026, 2, 10)
     
     async def cog_load(self):
         print("AFK loaded!")

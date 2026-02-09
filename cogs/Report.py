@@ -37,6 +37,9 @@ class Report(commands.Cog):
 
     async def cog_load(self):
         print("Report loaded!")
+    
+    def cog_unload(self):
+        print("Report unloaded!")
 
     @commands.Cog.listener()
     async def on_button_click(self, inter):

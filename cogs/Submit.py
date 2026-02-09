@@ -47,6 +47,9 @@ class Submit(commands.Cog):
     async def cog_load(self):
         print("Submit loaded!")
 
+    def cog_unload(self):
+        print("Submit unloaded!")
+
     @commands.slash_command(name="отчет", description="Отправить отчет о тренировке.")
     async def submit(self, inter, count: int = commands.Param(description="Кол-во сыгранных ДМов"),
                      screenshot: str = commands.Param(description="Ссылка на скриншот. Залей скрин на imgur/yapx и вставь ссылку сюда.")):

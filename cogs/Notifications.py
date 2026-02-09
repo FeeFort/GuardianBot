@@ -27,7 +27,7 @@ class Notifications(commands.Cog):
         print("Notification loaded!")
         self.notification.start()
 
-    async def cog_unload(self):
+    def cog_unload(self):
         print("Notification unloaded!")
         self.notification.cancel()
 
