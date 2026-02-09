@@ -19,7 +19,7 @@ creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPES)
 client = gspread.authorize(creds)
 
 sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBVJaNUKOZ6Me3l7Ey2iM-0X1f7SqvPBoQ/edit?gid=1654540911#gid=1654540911")
-ws = sheet.worksheet("LEADERBOARDTEST")
+ws = sheet.worksheet("LEADERBOARD")
 
 class ConfirmKickView(disnake.ui.View):
     def __init__(self, ws, kick_list, left_server, *, timeout=600):
@@ -180,6 +180,7 @@ def get_afk_candidates(
         246313643900141568,  # pa1ka
         435463855250866176,  # dreammaker
         368672308065337345,  # astedoto
+        800044087385522218   # akakiryuuuu
     }
 
     grid = ws.get(f"{a1_start}:{a1_end}")
@@ -282,16 +283,14 @@ async def apply_policy_kick_and_delete(
     if role is None:
         role = await guild.fetch_role(role_id)
 
-    # 1) Снимаем роль у тех, кто ещё на сервере
     for member, _row in kick_list:
         try:
-            #await member.remove_roles(role, reason="AFK 3 дня подряд")
+            await member.remove_roles(role, reason="AFK 3 дня подряд")
             roles_removed += 1
         except Exception as e:
             failed_roles += 1
             print(f"[AFK] remove_roles failed for {member} ({member.id}): {e!r}")
 
-    # 2) Удаляем строки (kick + left_server) снизу вверх
     rows_to_delete = (
         [row for _, row in kick_list] +
         left_server_rows
