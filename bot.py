@@ -1,5 +1,6 @@
 import os
 import logging
+from rich.logging import RichHandler
 from dotenv import load_dotenv
 
 import disnake
@@ -7,24 +8,11 @@ from disnake.ext import commands, tasks
 from colorlog import ColoredFormatter
 
 load_dotenv()
-handler = logging.StreamHandler()
-handler.setFormatter(
-    ColoredFormatter(
-        "%(log_color)s%(asctime)s [%(levelname)s] %(name)s:%(reset)s %(message)s",
-        datefmt="%H:%M:%S",
-        log_colors={
-            "DEBUG":    "cyan",
-            "INFO":     "green",
-            "WARNING":  "yellow",
-            "ERROR":    "red",
-            "CRITICAL": "bold_red",
-        },
-    )
-)
-
 logging.basicConfig(
     level=logging.INFO,
-    handlers=[handler],
+    format="%(name)s: %(message)s",
+    datefmt="%H:%M:%S",
+    handlers=[RichHandler(rich_tracebacks=True, markup=True, show_time=True)]
 )
 
 bot = commands.InteractionBot(intents=disnake.Intents.all())
