@@ -73,7 +73,7 @@ async def get_participants_and_day(ws, day_header: str, header_row: int = 1):
 class Top(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 11)
+        self.update_date = datetime.date(2026, 2, 10)
 
     async def cog_load(self):
         logger.info("Top loaded!")
@@ -144,7 +144,10 @@ class Top(commands.Cog):
         for member in members:
             for i in member:
                 try:
-                    summ += int(i)
+                    if int(i) < 1000000000:
+                        summ += int(i)
+                    else:
+                        raise ValueError("pashel nahuy")
                 except:
                     continue
 
@@ -234,7 +237,7 @@ class Top(commands.Cog):
                     embed.description += f"{place}. {member.mention} - {value} сыгранных ДМов.\n"
                     
 
-            await channel.send(embed=embed)
+            #await channel.send(embed=embed)
             
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             logger.info(f"UPDATE DATE: {self.update_date}")
