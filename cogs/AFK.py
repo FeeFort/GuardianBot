@@ -183,8 +183,9 @@ def get_afk_candidates(
         246313643900141568,  # pa1ka
         435463855250866176,  # dreammaker
         368672308065337345,  # astedoto
-        800044087385522218,   # akakiryuuuu
-        334395229115252740
+        800044087385522218,  # akakiryuuuu
+        334395229115252740,
+        1113600157863391282  # sunrise
     }
 
     grid = ws.get(f"{a1_start}:{a1_end}")
