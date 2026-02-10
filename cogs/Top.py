@@ -132,9 +132,14 @@ class Top(commands.Cog):
         msg = await channel.fetch_message(1468632737459077317)
         
         wave1, wave2 = get_wave_ranges(ws)
-        logger.info(f"WAVE1: {wave1}, WAVE2: {wave2}")
 
-        members = ws.get("C2:AG138")
+        members_wave1 = ws.get(f"C{wave1[0]}:AG{wave1[1]}")
+        members_wave2 = ws.get(f"C{wave2[0]}:AG{wave2[1]}")
+
+        logger.info(f"WAVE1: {members_wave1}, WAVE2: {members_wave2}")
+        
+        return
+
         summ = 0
         results = {}
         embed = disnake.Embed(title="🏆 Топ участников по кол-ву ДМов.", description="", colour=disnake.Colour.dark_gold())
