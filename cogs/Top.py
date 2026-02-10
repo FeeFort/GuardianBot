@@ -136,7 +136,8 @@ class Top(commands.Cog):
         members_wave1 = ws.get(f"C{wave1[0]}:AG{wave1[1]}")
         members_wave2 = ws.get(f"C{wave2[0]}:AG{wave2[1]}")
 
-        logger.info(f"WAVE1: {members_wave1}, WAVE2: {members_wave2}")
+        logger.info(f"WAVE1: {members_wave1}")
+        logger.info(f"WAVE2: {members_wave2}")
         
         return
 
