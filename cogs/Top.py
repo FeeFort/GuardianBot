@@ -22,6 +22,28 @@ client = gspread.authorize(creds)
 sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1G6FT2CrUIGBVJaNUKOZ6Me3l7Ey2iM-0X1f7SqvPBoQ/edit?gid=1654540911#gid=1654540911")
 ws = sheet.worksheet("LEADERBOARD")
 
+def get_wave_ranges(ws):
+    try:
+        divider_cell = ws.find("Вторая волна приглашений")
+    except gspread.exceptions.CellNotFound:
+        raise RuntimeError("Не найдена строка 'Вторая волна приглашений'")
+
+    divider_row = divider_cell.row
+
+    participants_col = ws.col_values(3)  # колонка C (Discord.name)
+    last_row = max(i for i, v in enumerate(participants_col, start=1) if v.strip())
+
+    wave1 = (2, divider_row - 1)
+    wave2 = (divider_row + 1, last_row)
+
+    # защитка от кривых диапазонов
+    if wave1[1] < wave1[0]:
+        wave1 = (2, 1)  # пустой диапазон
+    if wave2[1] < wave2[0]:
+        wave2 = (divider_row + 1, divider_row)  # пустой диапазон
+
+    return wave1, wave2
+
 async def get_participants_and_day(ws, day_header: str, header_row: int = 1):
     headers = ws.row_values(1)
 
@@ -108,6 +130,9 @@ class Top(commands.Cog):
         guild = await self.bot.fetch_guild(1467650949731582220)
         channel = await guild.fetch_channel(1468554041368907904)
         msg = await channel.fetch_message(1468632737459077317)
+        
+        wave1, wave2 = get_wave_ranges(ws)
+        logger.info(f"WAVE1: {wave1}, WAVE2: {wave2}")
 
         members = ws.get("C2:AG138")
         summ = 0
