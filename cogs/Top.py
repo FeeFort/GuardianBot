@@ -73,7 +73,7 @@ async def get_participants_and_day(ws, day_header: str, header_row: int = 1):
 class Top(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 10)
+        self.update_date = datetime.date(2026, 2, 11)
 
     async def cog_load(self):
         logger.info("Top loaded!")
@@ -236,7 +236,7 @@ class Top(commands.Cog):
                     embed.description += f"{place}. {member.mention} - {value} сыгранных ДМов.\n"
                     
 
-            #await channel.send(embed=embed)
+            await channel.send(embed=embed)
             
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             logger.info(f"UPDATE DATE: {self.update_date}")
