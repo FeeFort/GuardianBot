@@ -135,11 +135,7 @@ class Top(commands.Cog):
 
         members_wave1 = ws.get(f"C{wave1[0]}:AG{wave1[1]}")
         members_wave2 = ws.get(f"C{wave2[0]}:AG{wave2[1]}")
-
-        logger.info(f"WAVE1: {members_wave1}")
-        logger.info(f"WAVE2: {members_wave2}")
-        
-        return
+        members = members_wave1 + members_wave2
 
         summ = 0
         results = {}
@@ -206,6 +202,7 @@ class Top(commands.Cog):
             results = {}
             date = datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.")
             members = await get_participants_and_day(ws, date)
+            logger.info(f"MEMBERS: {members}")
             dt = datetime.datetime.now() - datetime.timedelta(hours=3)
             unix_ts = int(dt.timestamp())
             embed = disnake.Embed(title="🏆 Топ участников по кол-ву ДМов за день.", description=f"День: <t:{unix_ts}:D>\n\n", colour=disnake.Colour.dark_gold())
