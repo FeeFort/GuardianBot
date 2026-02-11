@@ -55,6 +55,7 @@ class Say(commands.Cog):
                   description: str = commands.Param(default=None, description="Описание Embed. Для переноса строки используй \\n."),
                   colour: str = commands.Param(default=None, description="Цвет Embed", choices=COLOUR_NAMES),
                   image: str = commands.Param(default=None, description="Ссылка на изображение Embed"),
+                  thumbnail: str = commands.Param(default=None, description="Ссылка на мини-изображение Embed в правом верхнем углу."),
                   reply_to: str = commands.Param(default=None, description="Ответить на сообщение пользователя. Нужен ID сообщения.")):
         await inter.response.defer(ephemeral=True)
 
@@ -71,6 +72,9 @@ class Say(commands.Cog):
         
         if image is not None:
             embed.set_image(url=image)
+
+        if thumbnail is not None:
+            embed.set_thumbnail(url=thumbnail)
 
         await inter.followup.send("Sended!")
         if title is None and description is None and image is None and reply_to is None:
