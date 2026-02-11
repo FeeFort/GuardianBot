@@ -441,7 +441,7 @@ class AFK(commands.Cog):
         name = member.name
 
         try:
-            col = ws.col_values(name)
+            col = ws.col_values(3)
 
             rows_to_delete = [
                 i for i, v in enumerate(col, start=1)
