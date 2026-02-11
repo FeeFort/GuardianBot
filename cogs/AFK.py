@@ -399,7 +399,7 @@ async def send_afk_report(admin_channel: disnake.TextChannel, ws, kick_list, lef
 class AFK(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 11)
+        self.update_date = datetime.date(2026, 2, 12)
     
     async def cog_load(self):
         logger.info("AFK loaded!")
@@ -435,6 +435,32 @@ class AFK(commands.Cog):
 
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             logger.info(f"UPDATE DATE: {self.update_date}")
+
+    @commands.Cog.listener()
+    async def on_member_remove(member):
+        name = member.name
+
+        try:
+            col = ws.col_values(name)
+
+            rows_to_delete = [
+                i for i, v in enumerate(col, start=1)
+                if v.strip() == name
+            ]
+
+            rows_to_delete = [r for r in rows_to_delete if r > 1]
+
+            if not rows_to_delete:
+                logger.info(f"[on_member_remove] {member} left, no row found for name='{name}'")
+                return
+
+            for row in sorted(rows_to_delete, reverse=True):
+                ws.delete_rows(row)
+
+            logger.info(f"[on_member_remove] {member} left, deleted {len(rows_to_delete)} row(s) for name='{name}'")
+
+        except Exception as e:
+            logger.error(f"[on_member_remove] failed for {member} name='{name}': {e!r}", exc_info=True)
 
 def setup(bot):
     bot.add_cog(AFK(bot))
