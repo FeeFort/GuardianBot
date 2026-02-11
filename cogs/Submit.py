@@ -72,7 +72,7 @@ class Submit(commands.Cog):
 
                     role = await inter.guild.fetch_role(1469043883282399345)
                     
-                    date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=3), "%d.%m.")
+                    date = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=1), "%d.%m.")
                     key_value = inter.author.name
                     key_cell = ws.find(key_value)
                     row = key_cell.row

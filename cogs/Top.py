@@ -198,7 +198,7 @@ class Top(commands.Cog):
         role_challanger = await guild.fetch_role(1467651039695081562)
         role_not_submit = await guild.fetch_role(1469043883282399345)
 
-        now = datetime.datetime.now() + datetime.timedelta(hours=3)
+        now = datetime.datetime.now() + datetime.timedelta(hours=1)
         now_date = datetime.date(now.year, now.month, now.day)
 
         if now_date == self.update_date:
