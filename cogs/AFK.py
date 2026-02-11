@@ -437,7 +437,7 @@ class AFK(commands.Cog):
             logger.info(f"UPDATE DATE: {self.update_date}")
 
     @commands.Cog.listener()
-    async def on_member_remove(member):
+    async def on_member_remove(self, member):
         name = member.name
 
         try:
