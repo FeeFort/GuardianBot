@@ -145,7 +145,8 @@ class Submit2(commands.Cog):
                                 body={"requests": request}
                             ).execute()
 
-                            await inter.message.edit("✅ Твой отчет принят! +Respect", view=None)
+                            message = await inter.original_message()
+                            await message.edit("✅ Твой отчет принят! +Respect", view=None)
 
                             if role in inter.author.roles:
                                 await inter.author.remove_roles(role)
