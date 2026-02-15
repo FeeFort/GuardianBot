@@ -3,6 +3,7 @@ import json
 import datetime
 import logging
 import requests
+import traceback
 from urllib.parse import urlparse
 
 import disnake
@@ -146,6 +147,9 @@ class Submit2(commands.Cog):
             else:
                 await inter.followup.send("🚫 Ссылка на скриншот указана в неправильном формате!")
         except Exception as e:
+            fail += 1
+            traceback.print_exc()
+
             channel = await inter.guild.fetch_channel(1468311758816153726)
             embed = disnake.Embed(title="🚫 Возникла непредвиденная ошибка!", description=f"```{e}```\n\nАвтор: {inter.author.mention}")
 
