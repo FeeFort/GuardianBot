@@ -85,69 +85,79 @@ class Submit2(commands.Cog):
                     matches = d["ocr"]["best"]["badge"]
                     date = datetime.datetime.strptime(f"{month} {day} 2026", "%b %d %Y")
 
-                    await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date.timestamp())}:D>\nПравильно ли сработало распознавание?")
-
-                    return
+                    await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date.timestamp())}:D>\nНажмите кнопку \"Отправить отчет\", если распознавание сработало верно. В противном случае, ничего не нажимайте, через 30 секунд мы получим ваш репорт автоматически.",
+                                              components=[disnake.ui.Button(label="Отправить отчет", emoji="🚀", style=disnake.ButtonStyle.green, custom_id="submit_2")])
                     
-                    date = datetime.datetime.strftime(datetime.datetime.now(), "%b.%d.")
-                    key_value = inter.author.name
-                    key_cell = ws.find(key_value)
-                    row = key_cell.row
+                    def check(inter: disnake.MessageInteraction):
+                        return (
+                            inter.custom_id == "submit_2"
+                        )
 
-                    column_header = date
-                    header_cell = ws.find(column_header)
-                    col = header_cell.col
+                    try:
+                        inter = await self.bot.wait_for("button_click", check=check, timeout=30)
 
-                    a1 = gspread.utils.rowcol_to_a1(row, col)
-                    range_a1 = f"{ws.title}!{a1}"
+                        date = datetime.datetime.strftime(date, "%d.%m.")
+                        key_value = inter.author.name
+                        key_cell = ws.find(key_value)
+                        row = key_cell.row
 
-                    resp = service.spreadsheets().values().get(
-                        spreadsheetId=spreadsheet_id,
-                        range=range_a1
-                    ).execute()
+                        column_header = date
+                        header_cell = ws.find(column_header)
+                        col = header_cell.col
 
-                    values = resp.get("values", [])
-                    has_value = bool(values) and bool(values[0]) and str(values[0][0]).strip() != ""
-                    
-                    if not has_value:
-                        request = [{
-                            "updateCells": {
-                                "range": {
-                                    "sheetId": sheet_id,
-                                    "startRowIndex": row - 1,
-                                    "endRowIndex": row,
-                                    "startColumnIndex": col - 1,
-                                    "endColumnIndex": col
-                                },
-                                "rows": [{
-                                    "values": [{
-                                        "userEnteredValue": {"numberValue": count},
-                                        "userEnteredFormat": {
-                                            "textFormat": {
-                                                "link": {"uri": screenshot}
-                                            }
-                                        }
-                                    }]
-                                }],
-                                "fields": "userEnteredValue,userEnteredFormat.textFormat.link"
-                            }
-                        }]
+                        a1 = gspread.utils.rowcol_to_a1(row, col)
+                        range_a1 = f"{ws.title}!{a1}"
 
-                        service.spreadsheets().batchUpdate(
+                        resp = service.spreadsheets().values().get(
                             spreadsheetId=spreadsheet_id,
-                            body={"requests": request}
+                            range=range_a1
                         ).execute()
 
-                        await inter.followup.send("✅ Твой отчет принят! +Respect")
+                        values = resp.get("values", [])
+                        has_value = bool(values) and bool(values[0]) and str(values[0][0]).strip() != ""
+                        
+                        if not has_value:
+                            request = [{
+                                "updateCells": {
+                                    "range": {
+                                        "sheetId": sheet_id,
+                                        "startRowIndex": row - 1,
+                                        "endRowIndex": row,
+                                        "startColumnIndex": col - 1,
+                                        "endColumnIndex": col
+                                    },
+                                    "rows": [{
+                                        "values": [{
+                                            "userEnteredValue": {"numberValue": matches},
+                                            "userEnteredFormat": {
+                                                "textFormat": {
+                                                    "link": {"uri": screenshot}
+                                                }
+                                            }
+                                        }]
+                                    }],
+                                    "fields": "userEnteredValue,userEnteredFormat.textFormat.link"
+                                }
+                            }]
 
-                        if role in inter.author.roles:
-                            await inter.author.remove_roles(role)
+                            service.spreadsheets().batchUpdate(
+                                spreadsheetId=spreadsheet_id,
+                                body={"requests": request}
+                            ).execute()
 
-                        channel = await inter.guild.fetch_channel(1468632013807419425)
-                        embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{count} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
-                        await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
-                    else:
-                        await inter.followup.send("🚫 Ты не можешь отправлять больше одного отчета в день!")
+                            await inter.followup.send("✅ Твой отчет принят! +Respect")
+
+                            if role in inter.author.roles:
+                                await inter.author.remove_roles(role)
+
+                            channel = await inter.guild.fetch_channel(1468632013807419425)
+                            embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{matches} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
+                            await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
+                        else:
+                            await inter.followup.send("🚫 Ты не можешь отправлять больше одного отчета в день!")
+                    
+                    except TimeoutError:
+                        await inter.follow.send("You didn't click in time.")
                 else:
                     await inter.followup.send("🚫 Указана неправильная ссылка на скриншот!")
             else:
