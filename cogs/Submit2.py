@@ -82,7 +82,7 @@ class Submit2(commands.Cog):
 
                     return
                     
-                    date = datetime.datetime.strftime(, "%b.%d.")
+                    date = datetime.datetime.strftime(datetime.datetime.now(), "%b.%d.")
                     key_value = inter.author.name
                     key_cell = ws.find(key_value)
                     row = key_cell.row
