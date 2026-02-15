@@ -82,7 +82,7 @@ class Submit2(commands.Cog):
                     d = json.loads(json.dumps(res, ensure_ascii=False, indent=2))
                     month = d["ocr"]["best"]["month"]
                     day = d["ocr"]["best"]["day"]
-                    matches = d["ocr"]["best"]["matches"]
+                    matches = d["ocr"]["best"]["badge"]
                     date = datetime.datetime.strptime(f"{month} {day}", "%b %d")
 
                     await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date)}:D>.\nПравильно ли сработало распознавание?")
