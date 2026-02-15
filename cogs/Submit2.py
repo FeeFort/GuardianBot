@@ -94,7 +94,7 @@ class Submit2(commands.Cog):
                         )
 
                     try:
-                        inter = await self.bot.wait_for("button_click", check=check, timeout=30)
+                        await self.bot.wait_for("button_click", check=check, timeout=30)
 
                         date = datetime.datetime.strftime(date, "%d.%m.")
                         key_value = inter.author.name
@@ -145,7 +145,7 @@ class Submit2(commands.Cog):
                                 body={"requests": request}
                             ).execute()
 
-                            await inter.followup.send("✅ Твой отчет принят! +Respect")
+                            await inter.message.edit("✅ Твой отчет принят! +Respect", view=None)
 
                             if role in inter.author.roles:
                                 await inter.author.remove_roles(role)
@@ -157,7 +157,7 @@ class Submit2(commands.Cog):
                             await inter.followup.send("🚫 Ты не можешь отправлять больше одного отчета в день!")
                     
                     except TimeoutError:
-                        await inter.follow.send("You didn't click in time.")
+                        await inter.followup.send("You didn't click in time.")
                 else:
                     await inter.followup.send("🚫 Указана неправильная ссылка на скриншот!")
             else:
