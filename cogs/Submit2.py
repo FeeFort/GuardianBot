@@ -84,6 +84,7 @@ class Submit2(commands.Cog):
                     month = d["ocr"]["best"]["month"]
                     day = d["ocr"]["best"]["day"]
                     matches = d["ocr"]["best"]["badge"]
+                    print(day)
                     date = datetime.datetime.strptime(f"{month} {day} 2026", "%b %d %Y")
 
                     await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date.timestamp())}:D>\nНажмите кнопку \"Отправить отчет\", если распознавание сработало верно. В противном случае, ничего не нажимайте, через 30 секунд мы получим ваш репорт автоматически.",
