@@ -72,7 +72,7 @@ class Submit2(commands.Cog):
 
                     role = await inter.guild.fetch_role(1469043883282399345)
 
-                    req = requests.post(TEST_URL)
+                    req = requests.post(screenshot)
                     url = req.json()["rawUrl"]
 
                     DEBUG_DIR = "debug_out"
