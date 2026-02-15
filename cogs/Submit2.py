@@ -72,6 +72,7 @@ class Submit2(commands.Cog):
                         return
 
                     role = await inter.guild.fetch_role(1469043883282399345)
+                    chuspan = await inter.guild.fetch_role(1471254421500334151)
 
                     req = requests.post(screenshot)
                     url = req.json()["rawUrl"]
@@ -95,6 +96,14 @@ class Submit2(commands.Cog):
 
                     try:
                         await self.bot.wait_for("button_click", check=check, timeout=30)
+
+                        if matches > 60:
+                            await inter.author.add_roles(chuspan)
+
+                            message = await inter.original_message()
+                            await message.edit("Лезешь править код элемента в браузере?\nТы не хакер. Ты просто человек, который дергает декорации и думает, что меняет систему.\nТебе выдали новую роль.\nТы её заслужил.", view=None)
+                            
+                            return
 
                         date = datetime.datetime.strftime(date, "%d.%m.")
                         key_value = inter.author.name
@@ -153,9 +162,9 @@ class Submit2(commands.Cog):
 
                             channel = await inter.guild.fetch_channel(1468632013807419425)
                             embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{matches} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
-                            await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
+                            #await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
                         else:
-                            await inter.followup.send("🚫 Ты не можешь отправлять больше одного отчета в день!")
+                            await inter.followup.send("🚫 У тебя уже сдан отчет в эту дату!")
                     
                     except TimeoutError:
                         await inter.followup.send("You didn't click in time.")
