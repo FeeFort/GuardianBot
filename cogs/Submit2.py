@@ -80,6 +80,8 @@ class Submit2(commands.Cog):
                     os.makedirs(DEBUG_DIR, exist_ok=True)
                     res = OCR.process_one(path=None, url=url, debug_dir=DEBUG_DIR)
                     d = json.dumps(res, ensure_ascii=False, indent=2)
+                    print(type(d))
+                    return
                     month = d["ocr"]["best"]["month"]
                     day = d["ocr"]["best"]["day"]
                     matches = d["ocr"]["best"]["matches"]
@@ -87,7 +89,7 @@ class Submit2(commands.Cog):
 
                     await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date)}:D>.\nПравильно ли сработало распознавание?")
 
-                    return
+                    
                     
                     date = datetime.datetime.strftime(datetime.datetime.now(), "%b.%d.")
                     key_value = inter.author.name
