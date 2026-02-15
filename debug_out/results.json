@@ -1,0 +1,237 @@
+[
+  {
+    "input": {
+      "path": "input\\image_test1.png",
+      "url": null
+    },
+    "crop": {
+      "mode": "canny",
+      "score": 0.5262925028800964,
+      "ax": 184.0,
+      "ay": 30.5,
+      "header_coords": [
+        0,
+        0,
+        118,
+        110
+      ],
+      "header_path": "debug_out\\image_test1_header.png"
+    },
+    "ocr": {
+      "best": {
+        "month": "Feb",
+        "day": 5,
+        "badge": 16,
+        "raw": "Feb 5\n16",
+        "invert": true,
+        "error": false
+      },
+      "candidates": [
+        {
+          "month": "Feb",
+          "day": 5,
+          "badge": 16,
+          "raw": "Feb 5\n(16",
+          "invert": false,
+          "error": false
+        },
+        {
+          "month": "Feb",
+          "day": 5,
+          "badge": 16,
+          "raw": "Feb 5\n16",
+          "invert": true,
+          "error": false
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "path": "input\\image_test2.png",
+      "url": null
+    },
+    "crop": {
+      "mode": "canny",
+      "score": 0.54610276222229,
+      "ax": 216.5,
+      "ay": 34.5,
+      "header_coords": [
+        0,
+        0,
+        150,
+        110
+      ],
+      "header_path": "debug_out\\image_test2_header.png"
+    },
+    "ocr": {
+      "best": {
+        "month": "Feb",
+        "day": 6,
+        "badge": 24,
+        "raw": "Feb 6\n24\n9n",
+        "invert": false,
+        "error": false
+      },
+      "candidates": [
+        {
+          "month": "Feb",
+          "day": 6,
+          "badge": 24,
+          "raw": "Feb 6\n24\n9n",
+          "invert": false,
+          "error": false
+        },
+        {
+          "month": "Feb",
+          "day": 6,
+          "badge": 24,
+          "raw": "Feb 6\n24\n9n",
+          "invert": true,
+          "error": false
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "path": "input\\image_test3.png",
+      "url": null
+    },
+    "crop": {
+      "mode": "canny",
+      "score": 0.5994378328323364,
+      "ax": 226.0,
+      "ay": 46.0,
+      "header_coords": [
+        0,
+        0,
+        160,
+        110
+      ],
+      "header_path": "debug_out\\image_test3_header.png"
+    },
+    "ocr": {
+      "best": {
+        "month": "Feb",
+        "day": 9,
+        "badge": 12,
+        "raw": "Feb 9 12",
+        "invert": false,
+        "error": false
+      },
+      "candidates": [
+        {
+          "month": "Feb",
+          "day": 9,
+          "badge": 12,
+          "raw": "Feb 9 12",
+          "invert": false,
+          "error": false
+        },
+        {
+          "month": null,
+          "day": 12,
+          "badge": null,
+          "raw": "Feb9 (12",
+          "invert": true,
+          "error": false
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "path": "input\\image_test4.png",
+      "url": null
+    },
+    "crop": {
+      "mode": "canny",
+      "score": 0.5248470902442932,
+      "ax": 245.0,
+      "ay": 40.5,
+      "header_coords": [
+        4,
+        0,
+        178,
+        110
+      ],
+      "header_path": "debug_out\\image_test4_header.png"
+    },
+    "ocr": {
+      "best": {
+        "month": "Feb",
+        "day": 6,
+        "badge": 10,
+        "raw": "Feb 6\n10\n6.",
+        "invert": false,
+        "error": false
+      },
+      "candidates": [
+        {
+          "month": "Feb",
+          "day": 6,
+          "badge": 10,
+          "raw": "Feb 6\n10\n6.",
+          "invert": false,
+          "error": false
+        },
+        {
+          "month": "Feb",
+          "day": 6,
+          "badge": null,
+          "raw": "Feb 6",
+          "invert": true,
+          "error": false
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "path": "input\\image_test5.png",
+      "url": null
+    },
+    "crop": {
+      "mode": "canny",
+      "score": 0.5383894443511963,
+      "ax": 227.0,
+      "ay": 64.0,
+      "header_coords": [
+        0,
+        15,
+        160,
+        125
+      ],
+      "header_path": "debug_out\\image_test5_header.png"
+    },
+    "ocr": {
+      "best": {
+        "month": "Feb",
+        "day": 7,
+        "badge": 10,
+        "raw": "Feb 7(10",
+        "invert": true,
+        "error": false
+      },
+      "candidates": [
+        {
+          "month": "Feb",
+          "day": 7,
+          "badge": null,
+          "raw": "Feb 7 C",
+          "invert": false,
+          "error": false
+        },
+        {
+          "month": "Feb",
+          "day": 7,
+          "badge": 10,
+          "raw": "Feb 7(10",
+          "invert": true,
+          "error": false
+        }
+      ]
+    }
+  }
+]
