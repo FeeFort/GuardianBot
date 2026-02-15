@@ -90,7 +90,7 @@ class Submit2(commands.Cog):
                     
                     def check(inter: disnake.MessageInteraction):
                         return (
-                            inter.custom_id == "submit_2"
+                            inter.component.custom_id == "submit_2"
                         )
 
                     try:
