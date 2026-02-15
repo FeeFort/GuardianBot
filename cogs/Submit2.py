@@ -85,7 +85,7 @@ class Submit2(commands.Cog):
                     matches = d["ocr"]["best"]["badge"]
                     date = datetime.datetime.strptime(f"{month} {day}", "%b %d")
 
-                    await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date)}:D>.\nПравильно ли сработало распознавание?")
+                    await inter.followup.send(f"Как я могу заметить из вашего изображения, Вы сыграли {matches} матчей <t:{int(date.timestamp())}:D>.\nПравильно ли сработало распознавание?")
 
                     return
                     
