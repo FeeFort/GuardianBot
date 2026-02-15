@@ -97,7 +97,7 @@ class Submit2(commands.Cog):
                     try:
                         await self.bot.wait_for("button_click", check=check, timeout=30)
 
-                        if matches > 60:
+                        if int(matches) > 60:
                             await inter.author.add_roles(chuspan)
 
                             message = await inter.original_message()
