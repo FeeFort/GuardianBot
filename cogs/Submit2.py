@@ -104,7 +104,7 @@ class Submit2(commands.Cog):
                     has_value = bool(values) and bool(values[0]) and str(values[0][0]).strip() != ""
                     
                     if not has_value:
-                        requests = [{
+                        request = [{
                             "updateCells": {
                                 "range": {
                                     "sheetId": sheet_id,
@@ -129,7 +129,7 @@ class Submit2(commands.Cog):
 
                         service.spreadsheets().batchUpdate(
                             spreadsheetId=spreadsheet_id,
-                            body={"requests": requests}
+                            body={"requests": request}
                         ).execute()
 
                         await inter.followup.send("✅ Твой отчет принят! +Respect")
@@ -147,7 +147,6 @@ class Submit2(commands.Cog):
             else:
                 await inter.followup.send("🚫 Ссылка на скриншот указана в неправильном формате!")
         except Exception as e:
-            fail += 1
             traceback.print_exc()
 
             channel = await inter.guild.fetch_channel(1468311758816153726)
