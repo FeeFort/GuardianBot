@@ -118,6 +118,9 @@ class Submit2(commands.Cog):
                             await message.edit("Лезешь править код элемента в браузере?\nТы не хакер. Ты просто человек, который дергает декорации и думает, что меняет систему.\nТебе выдали новую роль.\nТы её заслужил.", view=None)
                             
                             return
+                        elif int(matches) < 10:
+                            await message.edit(f"Зафиксировано: {matches} матчей <t:{int(date.timestamp())}:D>.\nЭтого недостаточно.\nПравила были понятны заранее.\nОтчет отклонен.\nПопробуй снова, когда цифры будут соответствовать требованиям.", view=None)
+                            return
 
                         date = datetime.datetime.strftime(date, "%d.%m.")
                         key_value = inter.author.name
@@ -177,10 +180,13 @@ class Submit2(commands.Cog):
                             embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{matches} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
                             #await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
                         else:
-                            await inter.followup.send("🚫 У тебя уже сдан отчет в эту дату!")
+                            await message.edit("🚫 У тебя уже сдан отчет в эту дату!", view=None)
                     
                     except TimeoutError:
-                        await inter.followup.send("You didn't click in time.")
+                        await message.edit("Ты ничего не нажал.\nИногда молчание - это тоже решение.\nОтчет ушел на ручную проверку.\nСистема запоминает всё.")
+                        
+                        channel = await inter.guild.fetch_channel(1472757147254263992)
+                        await channel.send(f"Участник не нажал кнопку. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
                 else:
                     await inter.followup.send("🚫 Указана неправильная ссылка на скриншот!")
             else:
@@ -194,6 +200,12 @@ class Submit2(commands.Cog):
             await inter.followup.send(f"🚫 Возникла непредвиденная ошибка!")
             await channel.send(embed = embed)
 
+    @commands.Cog.listener()
+    async def on_button_click(self, inter):
+        if inter.component.custom_id == "check_screenshot":
+            unix_dt = int(datetime.datetime.now().timestamp())
+            new = inter.message.content + f"\n\nСкриншот был проверен <t:{unix_dt}:f> пользователем {inter.author.mention}"
+            await inter.response.edit_message(content=new)
         
         
 
