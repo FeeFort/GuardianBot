@@ -73,6 +73,7 @@ class Submit2(commands.Cog):
 
                     role = await inter.guild.fetch_role(1469043883282399345)
                     chuspan = await inter.guild.fetch_role(1471254421500334151)
+                    message = await inter.original_message()
 
                     req = requests.post(screenshot)
                     url = req.json()["rawUrl"]
@@ -87,7 +88,6 @@ class Submit2(commands.Cog):
                     try:
                         date = datetime.datetime.strptime(f"{month} {day} 2026", "%b %d %Y")
                         now = datetime.datetime.now()
-                        message = await inter.original_message()
 
                         if date.date() >= datetime.date(now.year, now.month, now.day + 2):
                             await inter.author.add_roles(chuspan)
