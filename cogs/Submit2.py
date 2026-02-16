@@ -85,6 +85,13 @@ class Submit2(commands.Cog):
                     month = d["ocr"]["best"]["month"]
                     day = d["ocr"]["best"]["day"]
                     matches = d["ocr"]["best"]["badge"]
+
+                    if matches is None or day is None or month is None:
+                        channel = await inter.guild.fetch_channel(1472757147254263992)
+                        await channel.send(f"Распознавание завершилось с ошибкой. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
+                        await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот был отправлен разработчику.")
+                        return
+
                     try:
                         date = datetime.datetime.strptime(f"{month} {day} 2026", "%b %d %Y")
                         now = datetime.datetime.now()
@@ -100,12 +107,6 @@ class Submit2(commands.Cog):
                         await inter.author.add_roles(chuspan)
                         await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.")
                         
-                        return
-                    
-                    if matches is None:
-                        channel = await inter.guild.fetch_channel(1472757147254263992)
-                        await channel.send(f"Распознавание завершилось с ошибкой. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
-                        await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот был отправлен разработчику.")
                         return
 
                     await inter.followup.send(f"Я вижу: {matches} матчей <t:{int(date.timestamp())}:D>.\nЕсли всё верно - нажми «Отправить отчет».\nЕсли нет - просто ничего не делай.\nЧерез 30 секунд скриншот уйдет напрямую разработчику на проверку.\nИногда попытка промолчать говорит больше, чем кнопка.",
