@@ -205,7 +205,7 @@ class Top(commands.Cog):
             results = {}
             date = datetime.datetime.strftime(datetime.datetime.now() - datetime.timedelta(hours=10), "%d.%m.")
             members = await get_participants_and_day(ws, date)
-            dt = datetime.datetime.now() - datetime.timedelta(hours=3)
+            dt = datetime.datetime.now() - datetime.timedelta(hours=10)
             unix_ts = int(dt.timestamp())
             embed = disnake.Embed(title="🏆 Топ участников по кол-ву ДМов за день.", description=f"День: <t:{unix_ts}:D>\n\n", colour=disnake.Colour.dark_gold())
 
