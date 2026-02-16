@@ -91,21 +91,21 @@ class Submit2(commands.Cog):
 
                         if date.date() >= datetime.date(now.year, now.month, now.day + 2):
                             await inter.author.add_roles(chuspan)
-                            await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.", view=None)
+                            await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.")
                             return
                         elif date.date() < datetime.date(now.year, now.month, now.day - 1):
-                            await inter.followup.send("Ты пытаешься сдать отчёт за прошлое.\nВремя уже ушло.\nСистема живёт по датам, а не по оправданиям.", view=None)
+                            await inter.followup.send("Ты пытаешься сдать отчёт за прошлое.\nВремя уже ушло.\nСистема живёт по датам, а не по оправданиям.")
                             return
                     except ValueError as e:
                         await inter.author.add_roles(chuspan)
-                        await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.", view=None)
+                        await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.")
                         
                         return
                     
                     if matches is None:
                         channel = await inter.guild.fetch_channel(1472757147254263992)
                         await channel.send(f"Распознавание завершилось с ошибкой. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
-                        await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот также был отправлен разработчику.", view=None)
+                        await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот также был отправлен разработчику.")
                         return
 
                     await inter.followup.send(f"Я вижу: {matches} матчей <t:{int(date.timestamp())}:D>.\nЕсли всё верно - нажми «Отправить отчет».\nЕсли нет - просто ничего не делай.\nЧерез 30 секунд скриншот уйдет напрямую разработчику на проверку.\nИногда попытка промолчать говорит больше, чем кнопка.",
