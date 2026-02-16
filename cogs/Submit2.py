@@ -64,9 +64,11 @@ class Submit2(commands.Cog):
 
     async def cog_load(self):
         logger.info("Submit2.0 loaded!")
+        self.sendStatistic.start()
 
     def cog_unload(self):
         logger.info("Submit2.0 unloaded!")
+        self.sendStatistic.cancel()
 
     @commands.slash_command(name="отчет2-0", description="Отправить отчет о тренировке.")
     async def submit(self, inter, screenshot: str = commands.Param(description="Ссылка на скриншот. Залей скрин на voicechat.site и вставь ссылку сюда.")):
