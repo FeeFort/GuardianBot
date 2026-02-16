@@ -63,7 +63,7 @@ MONTHS = {
     "may": "May", "jun": "Jun", "jul": "Jul", "aug": "Aug",
     "sep": "Sep", "oct": "Oct", "nov": "Nov", "dec": "Dec",
 }
-DAY_RANGE = (1, 31)
+DAY_RANGE = (0, 999)
 BADGE_RANGE = (0, 999)
 
 # OCR preprocess
