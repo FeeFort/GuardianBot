@@ -7,7 +7,7 @@ import traceback
 from urllib.parse import urlparse
 
 import disnake
-from disnake.ext import commands
+from disnake.ext import commands, tasks
 
 import gspread
 from google.oauth2.service_account import Credentials
@@ -49,6 +49,15 @@ def findCell(ws, key_value, key_col, target_col_name):
     col = headers.index(target_col_name) + 1
     return ws.cell(row, col)
 
+def writeStatistic(key: str):
+    with open("submit2statistic.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    data[key] = int(data[key]) + 1
+
+    with open("submit2statistic.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
 class Submit2(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -80,16 +89,24 @@ class Submit2(commands.Cog):
 
                     DEBUG_DIR = "debug_out"
                     os.makedirs(DEBUG_DIR, exist_ok=True)
-                    res = OCR.process_one(path=None, url=url, debug_dir=DEBUG_DIR)
-                    d = json.loads(json.dumps(res, ensure_ascii=False, indent=2))
-                    month = d["ocr"]["best"]["month"]
-                    day = d["ocr"]["best"]["day"]
-                    matches = d["ocr"]["best"]["badge"]
+                    try:
+                        res = OCR.process_one(path=None, url=url, debug_dir=DEBUG_DIR)
+                        d = json.loads(json.dumps(res, ensure_ascii=False, indent=2))
+                        month = d["ocr"]["best"]["month"]
+                        day = d["ocr"]["best"]["day"]
+                        matches = d["ocr"]["best"]["badge"]
 
-                    if matches is None or day is None or month is None:
+                        if matches is None or day is None or month is None:
+                            channel = await inter.guild.fetch_channel(1472757147254263992)
+                            await channel.send(f"Распознавание завершилось с ошибкой. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
+                            await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот был отправлен разработчику.")
+                            writeStatistic("error")
+                            return
+                    except:
                         channel = await inter.guild.fetch_channel(1472757147254263992)
                         await channel.send(f"Распознавание завершилось с ошибкой. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
                         await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот был отправлен разработчику.")
+                        writeStatistic("error")
                         return
 
                     try:
@@ -99,6 +116,7 @@ class Submit2(commands.Cog):
                         if date.date() >= datetime.date(now.year, now.month, now.day + 2):
                             await inter.author.add_roles(chuspan)
                             await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.")
+                            writeStatistic("chuspan")
                             return
                         elif date.date() < datetime.date(now.year, now.month, now.day - 1):
                             await inter.followup.send("Ты пытаешься сдать отчёт за прошлое.\nВремя уже ушло.\nСистема живёт по датам, а не по оправданиям.")
@@ -107,6 +125,7 @@ class Submit2(commands.Cog):
                         await inter.author.add_roles(chuspan)
                         await inter.followup.send("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.")
                         
+                        writeStatistic("chuspan")
                         return
 
                     await inter.followup.send(f"Я вижу: {matches} матчей <t:{int(date.timestamp())}:D>.\nЕсли всё верно - нажми «Отправить отчет».\nЕсли нет - просто ничего не делай.\nЧерез 30 секунд скриншот уйдет напрямую разработчику на проверку.\nИногда попытка промолчать говорит больше, чем кнопка.",
@@ -123,6 +142,7 @@ class Submit2(commands.Cog):
                         if int(matches) > 60:
                             await inter.author.add_roles(chuspan)
                             await message.edit("Лезешь править код элемента в браузере?\nТы не хакер. Ты просто человек, который дергает декорации и думает, что меняет систему.\nТебе выдали новую роль.\nТы её заслужил.", view=None)
+                            writeStatistic("chuspan")
                             
                             return
                         elif int(matches) < 10:
@@ -186,12 +206,14 @@ class Submit2(commands.Cog):
                             channel = await inter.guild.fetch_channel(1468632013807419425)
                             embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{matches} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
                             await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
+                            writeStatistic("success")
                         else:
                             await message.edit("🚫 У тебя уже сдан отчет в эту дату!", view=None)
-                    
+                            writeStatistic("success")
                     except TimeoutError:
                         await message.edit("Ты ничего не нажал.\nИногда молчание - это тоже решение.\nОтчет ушел на ручную проверку.\nСистема запоминает всё.", view=None)
                         
+                        writeStatistic("not-success")
                         channel = await inter.guild.fetch_channel(1472757147254263992)
                         await channel.send(f"Участник не нажал кнопку. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
                 else:
@@ -213,7 +235,40 @@ class Submit2(commands.Cog):
             unix_dt = int(datetime.datetime.now().timestamp())
             new = inter.message.content + f"\n\nСкриншот был проверен <t:{unix_dt}:f> пользователем {inter.author.mention}"
             await inter.response.edit_message(content=new, view=None)
+
+    @tasks.loop(minutes=3)
+    async def sendStatistic(self):
+        with open("submit2statistic.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        success = int(data["success"])
+        not_success = int(data["not_success"])
+        error = int(data["error"])
+        chuspan = int(data["chuspan"])
+
+        summ = success + not_success + error + chuspan
+
+        if summ > 0:
+            success_percent = round((success * 100) / summ)
+            not_success_percent = round((not_success * 100) / summ)
+            error_percent = round((error * 100) / summ)
+            chuspan_percent = round((chuspan * 100) / summ)
+        else:
+            success_percent, not_success_percent, error_percent, chuspan_percent = 0, 0, 0, 0
+
+        guild = await self.bot.fetch_guild(1467650949731582220)
+        channel = await guild.fetch_channel(1473030818791293095)
+        message = await channel.fetch_message(1473034962121916486)
+
+        embed = message.embeds[0]
+
+        dt = datetime.datetime.now()
+        dt_next = dt + datetime.timedelta(minutes=3)
+        unix_ts = int(dt.timestamp())
+        unix_ts_next = int(dt_next.timestamp())
+        embed.description = (f"**В процентах:**\nУспешно сработало: {success_percent}%\nРаспознавание сработало неверно: {not_success_percent}%\nРаспознавание завершилось с ошибкой: {error_percent}%\nПопыток сжульничать: {chuspan_percent}%\n\n**В цифрах:**\nУспешно сработало: {success}\nРаспознавание сработало неверно: {not_success}\nРаспознавание завершилось с ошибкой: {error}\nПопыток сжульничать: {chuspan}\n\n⏱️ Обновлено: <t:{unix_ts}:f>\n📅 Следующее обновление: <t:{unix_ts_next}:f>")
         
+        await message.edit(embed = embed)
         
 
 def setup(bot):
