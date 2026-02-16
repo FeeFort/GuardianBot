@@ -73,7 +73,7 @@ async def get_participants_and_day(ws, day_header: str, header_row: int = 1):
 class Top(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 14)
+        self.update_date = datetime.date(2026, 2, 16)
 
     async def cog_load(self):
         logger.info("Top loaded!")
@@ -203,7 +203,7 @@ class Top(commands.Cog):
 
         if now_date == self.update_date:
             results = {}
-            date = datetime.datetime.strftime(datetime.datetime.now(), "%d.%m.")
+            date = datetime.datetime.strftime(datetime.datetime.now() - datetime.timedelta(hours=10), "%d.%m.")
             members = await get_participants_and_day(ws, date)
             dt = datetime.datetime.now() - datetime.timedelta(hours=3)
             unix_ts = int(dt.timestamp())
