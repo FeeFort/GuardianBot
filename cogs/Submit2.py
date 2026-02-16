@@ -183,7 +183,7 @@ class Submit2(commands.Cog):
                             await message.edit("🚫 У тебя уже сдан отчет в эту дату!", view=None)
                     
                     except TimeoutError:
-                        await message.edit("Ты ничего не нажал.\nИногда молчание - это тоже решение.\nОтчет ушел на ручную проверку.\nСистема запоминает всё.")
+                        await message.edit("Ты ничего не нажал.\nИногда молчание - это тоже решение.\nОтчет ушел на ручную проверку.\nСистема запоминает всё.", view=None)
                         
                         channel = await inter.guild.fetch_channel(1472757147254263992)
                         await channel.send(f"Участник не нажал кнопку. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
@@ -205,7 +205,7 @@ class Submit2(commands.Cog):
         if inter.component.custom_id == "check_screenshot":
             unix_dt = int(datetime.datetime.now().timestamp())
             new = inter.message.content + f"\n\nСкриншот был проверен <t:{unix_dt}:f> пользователем {inter.author.mention}"
-            await inter.response.edit_message(content=new)
+            await inter.response.edit_message(content=new, view=None)
         
         
 
