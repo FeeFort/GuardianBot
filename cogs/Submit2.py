@@ -244,7 +244,7 @@ class Submit2(commands.Cog):
             data = json.load(f)
 
         success = int(data["success"])
-        not_success = int(data["not_success"])
+        not_success = int(data["not-success"])
         error = int(data["error"])
         chuspan = int(data["chuspan"])
 
