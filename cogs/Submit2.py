@@ -178,7 +178,7 @@ class Submit2(commands.Cog):
 
                             channel = await inter.guild.fetch_channel(1468632013807419425)
                             embed = disnake.Embed(title="Guardian Grind #PA1KA", description=f"{matches} ДМов закрыто. +Respect.\n\n**[Пруф]({screenshot})**\n", colour=disnake.Colour.dark_gold())
-                            #await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
+                            await channel.send(content=f"🎯 {inter.author.mention} сдал отчет!", embed = embed)
                         else:
                             await message.edit("🚫 У тебя уже сдан отчет в эту дату!", view=None)
                     
