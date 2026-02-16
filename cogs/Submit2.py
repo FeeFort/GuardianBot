@@ -90,10 +90,10 @@ class Submit2(commands.Cog):
                         now = datetime.datetime.now()
                         message = await inter.original_message()
 
-                        if date >= datetime.date(now.year, now.month, now.day + 2):
+                        if date.date() >= datetime.date(now.year, now.month, now.day + 2):
                             await inter.author.add_roles(chuspan)
                             await message.edit("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.", view=None)
-                        elif date < datetime.date(now.year, now.month, now.day - 1):
+                        elif date.date() < datetime.date(now.year, now.month, now.day - 1):
                             await message.edit("Ты пытаешься сдать отчёт за прошлое.\nВремя уже ушло.\nСистема живёт по датам, а не по оправданиям.", view=None)
                     except ValueError as e:
                         await inter.author.add_roles(chuspan)
