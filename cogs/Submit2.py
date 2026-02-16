@@ -105,7 +105,7 @@ class Submit2(commands.Cog):
                     if matches is None:
                         channel = await inter.guild.fetch_channel(1472757147254263992)
                         await channel.send(f"Распознавание завершилось с ошибкой. Проверьте отчет: {screenshot}", components=[disnake.ui.Button(label="Отчет проверен", emoji="✅", style=disnake.ButtonStyle.grey, custom_id="check_screenshot")])
-                        await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот также был отправлен разработчику.")
+                        await inter.followup.send(f"Распознавание сорвалось.\nСкриншот не читается или данные на нём искажены.\nСделай новый скрин и отправь снова.\nТекущий скриншот был отправлен разработчику.")
                         return
 
                     await inter.followup.send(f"Я вижу: {matches} матчей <t:{int(date.timestamp())}:D>.\nЕсли всё верно - нажми «Отправить отчет».\nЕсли нет - просто ничего не делай.\nЧерез 30 секунд скриншот уйдет напрямую разработчику на проверку.\nИногда попытка промолчать говорит больше, чем кнопка.",
