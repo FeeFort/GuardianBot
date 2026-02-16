@@ -84,7 +84,6 @@ class Submit2(commands.Cog):
                     month = d["ocr"]["best"]["month"]
                     day = d["ocr"]["best"]["day"]
                     matches = d["ocr"]["best"]["badge"]
-                    print(day)
                     try:
                         date = datetime.datetime.strptime(f"{month} {day} 2026", "%b %d %Y")
                         now = datetime.datetime.now()
@@ -93,8 +92,10 @@ class Submit2(commands.Cog):
                         if date.date() >= datetime.date(now.year, now.month, now.day + 2):
                             await inter.author.add_roles(chuspan)
                             await message.edit("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.", view=None)
+                            return
                         elif date.date() < datetime.date(now.year, now.month, now.day - 1):
                             await message.edit("Ты пытаешься сдать отчёт за прошлое.\nВремя уже ушло.\nСистема живёт по датам, а не по оправданиям.", view=None)
+                            return
                     except ValueError as e:
                         await inter.author.add_roles(chuspan)
                         await message.edit("Ты решил переписать будущее в браузере.\nПоменял цифры и почувствовал контроль.\nНо контроль не у тебя.\nТы просто показал, что готов ломать декорации.\nРоль выдана.\nБез обсуждений.", view=None)
@@ -114,8 +115,6 @@ class Submit2(commands.Cog):
 
                         if int(matches) > 60:
                             await inter.author.add_roles(chuspan)
-
-                            message = await inter.original_message()
                             await message.edit("Лезешь править код элемента в браузере?\nТы не хакер. Ты просто человек, который дергает декорации и думает, что меняет систему.\nТебе выдали новую роль.\nТы её заслужил.", view=None)
                             
                             return
@@ -169,7 +168,6 @@ class Submit2(commands.Cog):
                                 body={"requests": request}
                             ).execute()
 
-                            message = await inter.original_message()
                             await message.edit("✅ Твой отчет принят! +Respect", view=None)
 
                             if role in inter.author.roles:
