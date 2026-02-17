@@ -73,7 +73,7 @@ async def get_participants_and_day(ws, day_header: str, header_row: int = 1):
 class Top(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_date = datetime.date(2026, 2, 17)
+        self.update_date = datetime.date(2026, 2, 19)
 
     async def cog_load(self):
         logger.info("Top loaded!")
@@ -242,7 +242,7 @@ class Top(commands.Cog):
             logger.info(f"UPDATE DATE: {self.update_date}")
 
             async for m in guild.fetch_members(limit=None):
-                if role_challanger in m.roles and role_not_submit not in m.roles:
+                if role_challanger in m.roles and role_not_submit not in m.roles and m.id != 661497184826425354:
                     await m.add_roles(role_not_submit)
 
 def setup(bot):
