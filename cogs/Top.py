@@ -241,8 +241,10 @@ class Top(commands.Cog):
             self.update_date = datetime.date(now.year, now.month, now.day + 1)
             logger.info(f"UPDATE DATE: {self.update_date}")
 
+            WHITELIST = [661497184826425354, 435463855250866176]
+
             async for m in guild.fetch_members(limit=None):
-                if role_challanger in m.roles and role_not_submit not in m.roles and m.id != 661497184826425354:
+                if role_challanger in m.roles and role_not_submit not in m.roles and m.id not in WHITELIST:
                     await m.add_roles(role_not_submit)
 
 def setup(bot):
